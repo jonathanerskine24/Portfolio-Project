@@ -19,7 +19,7 @@ typedef struct Board {
 
 typedef struct TileBar {
 	SDL_Rect tileBarRect;
-	SDL_Texture *tileBarText;
+	SDL_Texture *tileBarTex;
 	Tile *playerTiles;
 } TileBar;
 
@@ -47,6 +47,8 @@ void Render(Game *game);
 
 void Clean(Game *game);
 
-void LoadTiles(Tile *array, SDL_Renderer *renderer);
+// void LoadTiles(Tile *array, SDL_Renderer *renderer);
+Tile * LoadTiles(SDL_Renderer *renderer);
 
-void LoadPlayerTiles(Tile *, Tile *);
+// void LoadPlayerTiles(Tile *, Tile *);
+Tile * LoadPlayerTiles(Tile *letters);

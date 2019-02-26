@@ -15,7 +15,6 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 	if (fullScreen) flags = SDL_WINDOW_FULLSCREEN;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
-		// std::cout << "Subsystems Initialized..." << std::endl;
 		printf("Subsystems initialized...\n");
 
 		game->window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
@@ -24,20 +23,9 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 			printf("Window created!\n");
 		}
 
-		game->ui.board.boardRect.w = 800;
-		game->ui.board.boardRect.h = 800;
-		LoadTiles(game->letters, game->renderer);
-		LoadPlayerTiles(game->ui.tileBar.playerTiles, game->letters);
-
-
 		game->renderer = SDL_CreateRenderer(game->window, -1, 0);
 
-
-
 		game->ui.board.boardTex = LoadTexture("resources/scrabbleBoard.jpg", game->renderer);
-
-		// printf("$$$\n");
-		// game->ui->TileBar = constructTileBar();
 
 		if (game->renderer) { // confirm renderer was created
 			SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
@@ -45,6 +33,34 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 		}
 
 		game->isRunning = true;
+
+		// do other stuff here
+
+		game->ui.board.boardRect.w = 800;
+		game->ui.board.boardRect.h = 800;
+
+		game->letters = LoadTiles(game->renderer);
+
+
+		printf(".");
+
+
+		for (int i = 0; i < 7; i++) {
+			printf("%d ", i);
+			printf("%c\n ", game->letters[i].letter);
+		}
+
+		// LoadPlayerTiles(game->ui.tileBar.playerTiles, game->letters);
+		game->ui.tileBar.playerTiles = LoadPlayerTiles(game->letters);
+
+		for (int i = 0; i < 7; i ++) {
+			printf("**");
+			printf("%c\n", game->ui.tileBar.playerTiles[i].letter);
+		}
+
+
+
+
 	} else {
 		game->isRunning = false;
 	}
@@ -90,8 +106,11 @@ void Clean(Game* game) {
 }
 
 
-void LoadTiles(Tile *array, SDL_Renderer *renderer) {
-	array = (Tile*)malloc(sizeof(Tile) * 26);
+Tile* LoadTiles(SDL_Renderer *renderer) {
+	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
+
+	// Tile *array = game->letters;
+	// SDL_Renderer *renderer = game->renderer;
 
 	for (int i = 0; i<26; i++) {
 		array[i].letter = 65 + i;
@@ -107,26 +126,27 @@ void LoadTiles(Tile *array, SDL_Renderer *renderer) {
 	array[5].tileTex = LoadTexture("resources/tiles/F.png", renderer);
 	array[6].tileTex = LoadTexture("resources/tiles/G.png", renderer);
 	array[7].tileTex = LoadTexture("resources/tiles/H.png", renderer);
-	return;
+
+
+	for (int i = 0; i < 7; i++) {
+		printf("%c", array[i].letter);
+	}
+
+	return array;
 }
 
-void LoadPlayerTiles(Tile *ptiles, Tile *set) {
-	ptiles = (Tile *)malloc(sizeof(Tile) * 7);
+Tile* LoadPlayerTiles(Tile *set) {
+	Tile *ptiles = (Tile *)malloc(sizeof(Tile) * 7);
 
 	for (int i = 0; i<7; i++) {
 		int x = rand() % 7;
-		printf("%d\n", x);
+		printf("%c ", set[x].letter);
+		ptiles[i] = set[x];
 	}
 
-	for (int i = 0; i < 7; i++) {
-		printf("%d", set[i]->letter);
-	}
 
-	// for (int i = 0; i < 7; i++) {
-	// 	int x = rand() % 7;
-	// 	printf("%d", x);
-	// 	ptiles[i] = set[x];
-	// }
+	printf("\n....\n");
 
-	return;
+
+	return ptiles;
 }
