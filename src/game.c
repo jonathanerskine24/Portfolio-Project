@@ -1,6 +1,9 @@
 #include "../include/game2.h"
 #include <stdlib.h>
 
+
+
+
 SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
         SDL_Surface *tempSurface = IMG_Load(texture);
         SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, tempSurface);
@@ -11,10 +14,13 @@ SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
 
 void Init(Game* game, const char* title, int xpos, int ypos, int width, int height, bool fullScreen) {
 	int flags = 0;
+	const int BOARD_WIDTH = 800;
+	const int BOARD_HEIGHT = 800;
 
 	if (fullScreen) flags = SDL_WINDOW_FULLSCREEN;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+
 		printf("Subsystems initialized...\n");
 
 		game->window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
@@ -36,25 +42,23 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 
 		// do other stuff here
 
-		game->ui.board.boardRect.w = 800;
-		game->ui.board.boardRect.h = 800;
-
+		game->ui.board.boardRect.w = BOARD_WIDTH;
+		game->ui.board.boardRect.h = BOARD_HEIGHT;
 		game->letters = LoadTiles(game->renderer);
-
-
-		printf(".");
-
-
-		for (int i = 0; i < 7; i++) {
-			printf("%d ", i);
-			printf("%c\n ", game->letters[i].letter);
-		}
-
-		// LoadPlayerTiles(game->ui.tileBar.playerTiles, game->letters);
 		game->ui.tileBar.playerTiles = LoadPlayerTiles(game->letters);
 
+		// game->ui.tileBar.tileRects = InitTileBarRects(); // this code currently causes segfaults... fix
+
+
+
+		// for (int i = 0; i < 7; i++) {
+		// 	printf("%d ", i);
+		// 	printf("%c\n ", game->letters[i].letter);
+		// }
+
+
 		for (int i = 0; i < 7; i ++) {
-			printf("**");
+			// printf("**");
 			printf("%c\n", game->ui.tileBar.playerTiles[i].letter);
 		}
 
@@ -93,13 +97,20 @@ void Render(Game *game) {
 	SDL_RenderClear(game->renderer);
 	// this is where stuff to render goes
     SDL_RenderCopy(game->renderer, game->ui.board.boardTex, NULL,  &game->ui.board.boardRect);
+    // render the tiles in the players tile bar
+	// for (int i = 0; i < 7; i ++) { 
+	// 	SDL_RenderCopy(game->renderer, game->ui.tileBar.playerTiles[i].tileTex, NULL, &game->ui.tileBar.tileRects[i]);
+	// }
 	SDL_RenderPresent(game->renderer);
+
 	return;
 }
 
 void Clean(Game* game) {
 	SDL_DestroyWindow(game->window);
 	SDL_DestroyRenderer(game->renderer);
+	// free(game->ui);
+	// free(game->letters);
 	SDL_Quit();
 	printf("Game cleaned.\n");
 	return;
@@ -108,9 +119,6 @@ void Clean(Game* game) {
 
 Tile* LoadTiles(SDL_Renderer *renderer) {
 	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
-
-	// Tile *array = game->letters;
-	// SDL_Renderer *renderer = game->renderer;
 
 	for (int i = 0; i<26; i++) {
 		array[i].letter = 65 + i;
@@ -128,9 +136,9 @@ Tile* LoadTiles(SDL_Renderer *renderer) {
 	array[7].tileTex = LoadTexture("resources/tiles/H.png", renderer);
 
 
-	for (int i = 0; i < 7; i++) {
-		printf("%c", array[i].letter);
-	}
+	// for (int i = 0; i < 7; i++) {
+	// 	printf("%c", array[i].letter);
+	// }
 
 	return array;
 }
@@ -140,13 +148,25 @@ Tile* LoadPlayerTiles(Tile *set) {
 
 	for (int i = 0; i<7; i++) {
 		int x = rand() % 7;
-		printf("%c ", set[x].letter);
 		ptiles[i] = set[x];
 	}
 
-
-	printf("\n....\n");
-
-
 	return ptiles;
+}
+
+
+
+// this currently causes inconsistent segfaults... not called in code at the moment
+// for this reason
+SDL_Rect* InitTileBarRects() {
+	SDL_Rect *arrayOfRects = (SDL_Rect*)malloc(sizeof(SDL_Rect*) * 7);
+	for (int i = 0; i < 7; i++) {
+		arrayOfRects[i].h = 100;
+		arrayOfRects[i].w = 100;
+		arrayOfRects[i].x = i * 100;
+		arrayOfRects[i].y = 800;
+	}
+
+	return arrayOfRects;
+
 }

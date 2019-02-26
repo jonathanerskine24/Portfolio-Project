@@ -18,7 +18,7 @@ typedef struct Board {
 } Board;
 
 typedef struct TileBar {
-	SDL_Rect tileBarRect;
+	SDL_Rect *tileRects;
 	SDL_Texture *tileBarTex;
 	Tile *playerTiles;
 } TileBar;
@@ -52,3 +52,5 @@ Tile * LoadTiles(SDL_Renderer *renderer);
 
 // void LoadPlayerTiles(Tile *, Tile *);
 Tile * LoadPlayerTiles(Tile *letters);
+
+SDL_Rect * InitTileBarRects(void);
