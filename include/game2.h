@@ -1,40 +1,8 @@
 #pragma once
 #include <stdio.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "types.h"
 
-typedef struct Tile {
-	char letter;
-	int value;
-	SDL_Texture *tileTex;
-	SDL_Rect tileRect;
-} Tile;
-
-
-typedef struct Board {
-	SDL_Texture *boardTex;
-	SDL_Rect boardRect;
-} Board;
-
-typedef struct TileBar {
-	SDL_Rect *tileRects;
-	SDL_Texture *tileBarTex;
-	Tile *playerTiles;
-} TileBar;
-
-typedef struct UI {
-	Board board;
-	TileBar tileBar;
-} UI;
-
-typedef struct Game {
-	SDL_Window *window;
-	SDL_Renderer *renderer;
-	UI ui;
-	Tile *letters;
-	bool isRunning;
-} Game;
 
 
 void Init(Game* game, const char* title, int xpos, int ypos, int width, int height, bool fullScreen);
@@ -47,10 +15,6 @@ void Render(Game *game);
 
 void Clean(Game *game);
 
-// void LoadTiles(Tile *array, SDL_Renderer *renderer);
-Tile * LoadTiles(SDL_Renderer *renderer);
+// put this shit somewhere else
 
-// void LoadPlayerTiles(Tile *, Tile *);
-Tile * LoadPlayerTiles(Tile *letters);
-
-SDL_Rect * InitTileBarRects(void);
+void checkPlayerTileClick(Position mousePos, Tile *location);

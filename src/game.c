@@ -1,6 +1,8 @@
-#include "../include/game2.h"
 #include <stdlib.h>
-
+#include <time.h>
+#include "../include/game2.h"
+#include "../include/game_initialization.h"
+#include "../include/types.h"
 
 
 
@@ -13,6 +15,9 @@ SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
 
 
 void Init(Game* game, const char* title, int xpos, int ypos, int width, int height, bool fullScreen) {
+
+	srand(time(NULL));
+
 	int flags = 0;
 	const int BOARD_WIDTH = 800;
 	const int BOARD_HEIGHT = 800;
@@ -41,14 +46,21 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 		game->isRunning = true;
 
 		// do other stuff here
-
+		game->selectedTile = NULL;
 		game->ui.board.boardRect.w = BOARD_WIDTH;
 		game->ui.board.boardRect.h = BOARD_HEIGHT;
 		game->letters = LoadTiles(game->renderer);
 		game->ui.tileBar.playerTiles = LoadPlayerTiles(game->letters);
 
-		// game->ui.tileBar.tileRects = InitTileBarRects(); // this code currently causes segfaults... fix
+		// InitTileBarRects(game->ui.tileBar.tileRects); // this code currently causes segfaults... fix
+		// game->ui.tileBar.tileRects = InitTileBarRects();
 
+		for (int i = 0; i < 7; i++) {
+			game->ui.tileBar.tileRects[i].h = 90;
+			game->ui.tileBar.tileRects[i].w = 90;
+			game->ui.tileBar.tileRects[i].x = 5+ (i * 100);
+			game->ui.tileBar.tileRects[i].y = 805;
+		}
 
 
 		// for (int i = 0; i < 7; i++) {
@@ -71,6 +83,9 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 }
 
 void HandleEvents(Game* game) {
+
+	printf("HANDLEEVENTS\n");
+
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
@@ -83,6 +98,13 @@ void HandleEvents(Game* game) {
 				case SDLK_RETURN:
 					break;
 			}
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				Position mousepos;
+				mousepos.x = event.button.x; mousepos.y = event.button.y;
+				checkPlayerTileClick(mousepos, game->selectedTile);
+			}
+
 		default:
 			break;
 	}
@@ -98,9 +120,9 @@ void Render(Game *game) {
 	// this is where stuff to render goes
     SDL_RenderCopy(game->renderer, game->ui.board.boardTex, NULL,  &game->ui.board.boardRect);
     // render the tiles in the players tile bar
-	// for (int i = 0; i < 7; i ++) { 
-	// 	SDL_RenderCopy(game->renderer, game->ui.tileBar.playerTiles[i].tileTex, NULL, &game->ui.tileBar.tileRects[i]);
-	// }
+	for (int i = 0; i < 7; i ++) { 
+		SDL_RenderCopy(game->renderer, game->ui.tileBar.playerTiles[i].tileTex, NULL, &game->ui.tileBar.tileRects[i]);
+	}
 	SDL_RenderPresent(game->renderer);
 
 	return;
@@ -117,56 +139,39 @@ void Clean(Game* game) {
 }
 
 
-Tile* LoadTiles(SDL_Renderer *renderer) {
-	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
+// put this shit somewhere else vv
 
-	for (int i = 0; i<26; i++) {
-		array[i].letter = 65 + i;
-		array[i].tileRect.w = 100;
-		array[i].tileRect.h = 100;
-	}
-
-	array[0].tileTex = LoadTexture("resources/tiles/A.png", renderer);
-	array[1].tileTex = LoadTexture("resources/tiles/B.png", renderer);
-	array[2].tileTex = LoadTexture("resources/tiles/C.png", renderer);
-	array[3].tileTex = LoadTexture("resources/tiles/D.png", renderer);
-	array[4].tileTex = LoadTexture("resources/tiles/E.png", renderer);
-	array[5].tileTex = LoadTexture("resources/tiles/F.png", renderer);
-	array[6].tileTex = LoadTexture("resources/tiles/G.png", renderer);
-	array[7].tileTex = LoadTexture("resources/tiles/H.png", renderer);
-
-
-	// for (int i = 0; i < 7; i++) {
-	// 	printf("%c", array[i].letter);
-	// }
-
-	return array;
-}
-
-Tile* LoadPlayerTiles(Tile *set) {
-	Tile *ptiles = (Tile *)malloc(sizeof(Tile) * 7);
-
-	for (int i = 0; i<7; i++) {
-		int x = rand() % 7;
-		ptiles[i] = set[x];
-	}
-
-	return ptiles;
-}
+// void InitTileSlotArray(TileSlot *boardTiles[][]) {
+// 	for (int i = 0; i < 15; i++) {
+// 		for (int j = 0; j < 15; j++) {
+// 			boardTiles[i][j]->x_coord = i;
+// 			boardTiles[i][j]->y_coord = j;
+// 			boardTiles[i][j]->validConnection = false;
+// 			boardTiles[i][j]->occupied = false;
+// 			boardTiles[i][j]->tile->tileRect.x = (51 * i) + (2 * i);
+// 			boardTiles[i][j]->tile->tileRect.y = (51 * i) + (2 * i);
+// 			boardTiles[i][j]->tile->tileRect.l = 51;
+// 			boardTiles[i][j]->tile->tileRect.w = 51;
+// 		}
+// 	}
+// 	return;
+// }
 
 
+// check if mouse has clicked an item in my players hand
+void checkPlayerTileClick(Position mousePos, Tile *location) {
+	// SDL_Rect *pieceR = piece->getRect();
+	// int left, right, top, bottom;
+	// left = pieceR->y;
+	// right = pieceR->y + pieceR->w;
+	// top = pieceR->x;
+	// bottom = pieceR->x + pieceR->h;
 
-// this currently causes inconsistent segfaults... not called in code at the moment
-// for this reason
-SDL_Rect* InitTileBarRects() {
-	SDL_Rect *arrayOfRects = (SDL_Rect*)malloc(sizeof(SDL_Rect*) * 7);
-	for (int i = 0; i < 7; i++) {
-		arrayOfRects[i].h = 100;
-		arrayOfRects[i].w = 100;
-		arrayOfRects[i].x = i * 100;
-		arrayOfRects[i].y = 800;
-	}
+	// if (mousePos.x < top) piece->setClicked(false);
+	// else if (mousePos.x > bottom) piece->setClicked(false);
+	// else if (mousePos.y > right) piece->setClicked(false);
+	// else if (mousePos.y < left) piece->setClicked(false);
 
-	return arrayOfRects;
 
+	return;
 }
