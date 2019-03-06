@@ -36,7 +36,7 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 
 		game->renderer = SDL_CreateRenderer(game->window, -1, 0);
 
-		game->ui.board.boardTex = LoadTexture("resources/scrabbleBoard.jpg", game->renderer);
+		game->ui.board.boardTileTex = LoadTexture("resources/boardTile.jpg", game->renderer);
 
 		if (game->renderer) { // confirm renderer was created
 			SDL_SetRenderDrawColor(game->renderer, 27, 27, 27, 255);
@@ -47,8 +47,8 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 
 		// do other stuff here
 		game->selectedTile = NULL;
-		game->ui.board.boardRect.w = BOARD_WIDTH;
-		game->ui.board.boardRect.h = BOARD_HEIGHT;
+		game->ui.board.boardRect.w = game->params.BOARD_WIDTH;
+		game->ui.board.boardRect.h = game->params.BOARD_HEIGHT;
 		game->letters = LoadTiles(game->renderer);
 		game->ui.tilebar.playerTiles = LoadPlayerTiles(game->letters);
 		game->ui.tilebar.highlightedRectIndex = -1;
@@ -60,13 +60,22 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 			game->ui.tilebar.tileRects[i].h = 90;
 			game->ui.tilebar.tileRects[i].w = 90;
 			game->ui.tilebar.tileRects[i].x = 5+ (i * 100);
-			game->ui.tilebar.tileRects[i].y = 805;
+			game->ui.tilebar.tileRects[i].y = game->params.BOARD_HEIGHT + 5;
 			game->ui.tilebar.tileSlotRects[i].h = 100;
 			game->ui.tilebar.tileSlotRects[i].w = 100;
 			game->ui.tilebar.tileSlotRects[i].x = (i*100);
-			game->ui.tilebar.tileSlotRects[i].y = 800;
+			game->ui.tilebar.tileSlotRects[i].y = game->params.BOARD_HEIGHT;
 		}
 
+
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				game->ui.board.boardRects[i][j].w = 54;
+				game->ui.board.boardRects[i][j].h = 54;
+				game->ui.board.boardRects[i][j].x = i*54;
+				game->ui.board.boardRects[i][j].y = j*54;
+			}
+		}	
 
 		// for (int i = 0; i < 7; i++) {
 		// 	printf("%d ", i);
@@ -132,7 +141,11 @@ void Render(Game *game) {
 	SDL_RenderClear(game->renderer);
 
 	// past this line is where stuff to render goes
-    SDL_RenderCopy(game->renderer, game->ui.board.boardTex, NULL,  &game->ui.board.boardRect);
+    for (int i = 0; i < 15; i++) {
+		for (int j = 0; j < 15; j++) {
+    		SDL_RenderCopy(game->renderer, game->ui.board.boardTileTex, NULL, &game->ui.board.boardRects[i][j]);
+    	}
+	}
 
     // check for selectedTile, render it if so
     if (game->ui.tilebar.highlightedRectIndex >= 0) {

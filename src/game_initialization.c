@@ -18,8 +18,8 @@ Tile* LoadTiles(SDL_Renderer *renderer) {
 	array[5].tileTex = LoadTexture("resources/tiles/F.png", renderer);
 	array[6].tileTex = LoadTexture("resources/tiles/G.png", renderer);
 	array[7].tileTex = LoadTexture("resources/tiles/H.png", renderer);
-	
-	
+
+
 	// for (int i = 0; i < 7; i++) {
 	// 	printf("%c", array[i].letter);
 	// }
@@ -42,15 +42,16 @@ Tile* LoadPlayerTiles(Tile *set) {
 
 // this currently causes inconsistent segfaults... not called in code at the moment
 // for this reason
-SDL_Rect* InitTileBarRects() {
+SDL_Rect* InitTileBarRects(GameParameters *params) {
 	// arrayOfRects = (SDL_Rect*)malloc(sizeof(SDL_Rect*) * 7);
 	SDL_Rect arrayOfRects[7];
 	for (int i = 0; i < 7; i++) {
 		arrayOfRects[i].h = 100;
 		arrayOfRects[i].w = 100;
 		arrayOfRects[i].x = i * 100;
-		arrayOfRects[i].y = 800;
+		arrayOfRects[i].y = params->BOARD_HEIGHT;
 	}
 	return arrayOfRects;
 	// return arrayOfRects;
 }
+

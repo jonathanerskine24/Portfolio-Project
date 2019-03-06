@@ -3,6 +3,13 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
+typedef struct GameParameters {
+	int BOARD_WIDTH;
+	int BOARD_HEIGHT;
+	int WINDOW_WIDTH;
+	int WINDOW_HEIGHT;
+} GameParameters;
+
 typedef struct Tile {
 	char letter;
 	int value;
@@ -21,8 +28,9 @@ typedef struct TileSlot {
 
 
 typedef struct Board {
-	SDL_Texture *boardTex;
+	SDL_Texture *boardTileTex;
 	SDL_Rect boardRect;
+	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
 } Board;
 
@@ -41,6 +49,7 @@ typedef struct UI {
 } UI;
 
 typedef struct Game {
+	GameParameters params;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	UI ui;
