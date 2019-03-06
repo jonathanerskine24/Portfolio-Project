@@ -15,6 +15,7 @@ typedef struct TileSlot {
 	int y_coord;
 	bool validConnection;
 	bool occupied;
+	bool selected;
 	Tile *tile;
 } TileSlot;
 
@@ -27,13 +28,16 @@ typedef struct Board {
 
 typedef struct TileBar {
 	SDL_Texture *tileBarTex;
+	SDL_Texture *highlightTex;
 	Tile *playerTiles;
 	SDL_Rect tileRects[7];
+	SDL_Rect tileSlotRects[7];
+	int highlightedRectIndex;
 } TileBar;
 
 typedef struct UI {
 	Board board;
-	TileBar tileBar;
+	TileBar tilebar;
 } UI;
 
 typedef struct Game {

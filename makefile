@@ -12,25 +12,25 @@ LINKER_FLAGS = -lSDL2 -lSDL2_image
 OBJ_NAME = 01_hello_SDL 
 #This is the target that compiles our executable 
 all:
-	gcc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
-	gcc src/game.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
-	gcc src/game_initialization.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/game.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/game_initialization.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/board.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/piece.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/TextureManager.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	make clean
-	g++ $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
+	cc $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
 	# make clean
 	clear
 main:
-	gcc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	make clean
-	g++ $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
+	cc $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
 	clear
 game:
-	gcc src/game.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/game.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	make clean
-	g++ $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
+	cc $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
 	clear
 # board:
 # 	g++ src/board.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
@@ -48,7 +48,7 @@ game:
 # 	g++ $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o chess
 # 	clear
 build:
-	gcc bin/main.o bin/game.o -o scrabble
+	cc bin/main.o bin/game.o -o scrabble
 	make clean
 clean:
 	cp *.o bin

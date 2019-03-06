@@ -18,8 +18,8 @@ Tile* LoadTiles(SDL_Renderer *renderer) {
 	array[5].tileTex = LoadTexture("resources/tiles/F.png", renderer);
 	array[6].tileTex = LoadTexture("resources/tiles/G.png", renderer);
 	array[7].tileTex = LoadTexture("resources/tiles/H.png", renderer);
-
-
+	
+	
 	// for (int i = 0; i < 7; i++) {
 	// 	printf("%c", array[i].letter);
 	// }
