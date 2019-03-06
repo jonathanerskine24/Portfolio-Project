@@ -8,7 +8,6 @@ Tile * LoadTiles(SDL_Renderer *renderer);
 // void LoadPlayerTiles(Tile *, Tile *);
 Tile * LoadPlayerTiles(Tile *letters);
 
-SDL_Rect* InitTileBarRects(GameParameters* params);
-// void InitTileBarRects(SDL_Rect*);
+void InitTileBarRects(Game *game);
 
-// void InitTileSlotArray(TileSlot *boardTiles[][]);
+void InitBoardRects(Game *game);

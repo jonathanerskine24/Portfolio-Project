@@ -38,20 +38,28 @@ Tile* LoadPlayerTiles(Tile *set) {
 	return ptiles;
 }
 
-
-
-// this currently causes inconsistent segfaults... not called in code at the moment
-// for this reason
-SDL_Rect* InitTileBarRects(GameParameters *params) {
-	// arrayOfRects = (SDL_Rect*)malloc(sizeof(SDL_Rect*) * 7);
-	SDL_Rect arrayOfRects[7];
+void InitTileBarRects(Game *game) {
 	for (int i = 0; i < 7; i++) {
-		arrayOfRects[i].h = 100;
-		arrayOfRects[i].w = 100;
-		arrayOfRects[i].x = i * 100;
-		arrayOfRects[i].y = params->BOARD_HEIGHT;
+		game->ui.tilebar.tileRects[i].h = 90;
+		game->ui.tilebar.tileRects[i].w = 90;
+		game->ui.tilebar.tileRects[i].x = 5+ (i * 100);
+		game->ui.tilebar.tileRects[i].y = game->params.BOARD_HEIGHT + 5;
+		game->ui.tilebar.tileSlotRects[i].h = 100;
+		game->ui.tilebar.tileSlotRects[i].w = 100;
+		game->ui.tilebar.tileSlotRects[i].x = (i*100);
+		game->ui.tilebar.tileSlotRects[i].y = game->params.BOARD_HEIGHT;
 	}
-	return arrayOfRects;
-	// return arrayOfRects;
+	return;
 }
 
+void InitBoardRects(Game *game) {
+	for (int i = 0; i < 15; i++) {
+		for (int j = 0; j < 15; j++) {
+			game->ui.board.boardRects[i][j].w = 54;
+			game->ui.board.boardRects[i][j].h = 54;
+			game->ui.board.boardRects[i][j].x = i*54;
+			game->ui.board.boardRects[i][j].y = j*54;
+		}
+	}	
+	return;
+}
