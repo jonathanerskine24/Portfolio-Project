@@ -34,31 +34,13 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 		}
 
 		game->renderer = SDL_CreateRenderer(game->window, -1, 0);
-		game->ui.board.boardTileTex = LoadTexture("resources/boardTile.jpg", game->renderer);
 
 		if (game->renderer) { // confirm renderer was created
 			SDL_SetRenderDrawColor(game->renderer, 27, 27, 27, 255);
 			printf("Renderer created!\n");
 		}
 
-		game->isRunning = true;
-
-		// do other stuff here
-
-		game->selectedTile = NULL;
-		game->ui.board.boardRect.w = game->params.BOARD_WIDTH;
-		game->ui.board.boardRect.h = game->params.BOARD_HEIGHT;
-		game->letters = LoadTiles(game->renderer);
-		game->ui.tilebar.playerTiles = LoadPlayerTiles(game->letters);
-		game->ui.tilebar.highlightedRectIndex = -1;
-		game->ui.tilebar.highlightTex = LoadTexture("resources/highlight.jpg", game->renderer);
-		InitTileBarRects(game);
-		InitBoardRects(game);
-	
-
-		// for (int i = 0; i < 7; i ++) {
-		// 	printf("%c\n", game->ui.tilebar.playerTiles[i].letter);
-		// }
+		InitializeGame(game);
 
 	} else {
 		game->isRunning = false;

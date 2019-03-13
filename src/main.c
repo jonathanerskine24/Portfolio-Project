@@ -3,7 +3,14 @@
 
 
 
-int main(void) {
+int main(int argc, char** argv[]) {
+
+	int board_size = atoi(argv[1]);
+
+	// if (board_size % 2 == 0) {
+	// 	printf("Please select an odd number for board size\n");
+	// 	return 0;
+	// }
 
 
 	const int FPS = 60;
@@ -15,9 +22,14 @@ int main(void) {
 	Game *game;
 
 	game = (Game*)malloc(sizeof(Game));
+	game->board_size = board_size;
+
+
 
 	game->params.BOARD_WIDTH = 810;
 	game->params.BOARD_HEIGHT = 810;
+	// game->params.BOARD_WIDTH = 54 * board_size;
+	// game->params.BOARD_HEIGHT = 54 * board_size;
 	game->params.WINDOW_WIDTH = game->params.BOARD_WIDTH + 100;
 	game->params.WINDOW_HEIGHT = game->params.BOARD_HEIGHT + 100;
 

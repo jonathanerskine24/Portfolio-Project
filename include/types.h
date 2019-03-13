@@ -30,6 +30,8 @@ typedef struct TileSlot {
 typedef struct Board {
 	SDL_Texture *boardTileTex;
 	SDL_Rect boardRect;
+	// SDL_Rect *boardRects[][]; // need to make board variable size
+	// TileSlot *boardTiles[][];
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
 } Board;
@@ -49,6 +51,7 @@ typedef struct UI {
 } UI;
 
 typedef struct Game {
+	int board_size;
 	GameParameters params;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
