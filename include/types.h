@@ -17,6 +17,12 @@ typedef struct Tile {
 	SDL_Rect tileRect;
 } Tile;
 
+typedef struct StagedTile {
+	int tile;
+	int x_pos;
+	int y_pos;
+} StagedTile;
+
 typedef struct TileSlot {
 	int x_coord;
 	int y_coord;
@@ -29,17 +35,21 @@ typedef struct TileSlot {
 
 typedef struct Board {
 	SDL_Texture *boardTileTex;
+	SDL_Texture *centerTileTex;
 	SDL_Rect boardRect;
 	// SDL_Rect *boardRects[][]; // need to make board variable size
 	// TileSlot *boardTiles[][];
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
+	int numStagedTiles;
+	StagedTile **stagedTiles[];
 } Board;
 
 typedef struct TileBar {
 	SDL_Texture *tileBarTex;
 	SDL_Texture *highlightTex;
-	Tile *playerTiles;
+	// Tile *playerTiles;
+	int playerTiles[7];
 	SDL_Rect tileRects[7];
 	SDL_Rect tileSlotRects[7];
 	int highlightedRectIndex;
@@ -50,6 +60,11 @@ typedef struct UI {
 	TileBar tilebar;
 } UI;
 
+typedef struct Position {
+	int x;
+	int y;
+} Position;
+
 typedef struct Game {
 	int board_size;
 	GameParameters params;
@@ -57,11 +72,9 @@ typedef struct Game {
 	SDL_Renderer *renderer;
 	UI ui;
 	Tile *letters;
-	Tile *selectedTile;
+	int selectedTile;
+	Position selectedBoardTile;
 	bool isRunning;
+	bool tileSelected;
 } Game;
 
-typedef struct Position {
-	int x;
-	int y;
-} Position;

@@ -3,7 +3,7 @@
 #include "../include/game2.h"
 #include "../include/game_initialization.h"
 #include "../include/types.h"
-
+#include "../include/helper.h"
 
 
 SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
@@ -62,17 +62,38 @@ void HandleEvents(Game* game) {
 					break;
 			}
 		case SDL_MOUSEBUTTONDOWN:
+
+
 			// left click
 			if (event.button.button == SDL_BUTTON_LEFT) {
-				Position mousepos;
-				mousepos.x = event.button.x; mousepos.y = event.button.y;
-				// printf("X %d , Y %d\n", mousepos.x, mousepos.y);	
-				if (mousepos.y > 800) {
+
+				// get mouse position
+				Position mousepos = GetMousePos(event);
+
+				// check if clicked tile in hand
+				if (mousepos.y > 810) {
 					game->ui.tilebar.highlightedRectIndex = mousepos.x / 100;
+					game->tileSelected = true;
+					game->selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex];
+					printf("%d", game->selectedTile);
 				} else {
+					// game->ui.tilebar.highlightedRectIndex = -1;
+					// game->tileSelected = false;
+				}
+
+
+
+				// check if selected board tile
+				if ((game->tileSelected) && (mousepos.y < 810)) {
+					// printf("!\n");
+					SelectBoardTile(game, mousepos);
+					PlaceTile(game);
+					game->tileSelected = false;
 					game->ui.tilebar.highlightedRectIndex = -1;
 				}
-				checkPlayerTileClick(mousepos, game->selectedTile);
+
+
+
 			// right click
 			} else if (event.button.button == SDL_BUTTON_RIGHT) {
 
@@ -89,14 +110,31 @@ void Update(Game * game) {
 }
 
 void Render(Game *game) {
+
+
 	SDL_RenderClear(game->renderer);
 
 	// past this line is where stuff to render goes
+
+	// render the board
     for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 15; j++) {
     		SDL_RenderCopy(game->renderer, game->ui.board.boardTileTex, NULL, &game->ui.board.boardRects[i][j]);
     	}
 	}
+
+	// render the locked in tiles
+
+
+	// render the staged tiles
+	if (game->ui.board.numStagedTiles != 0) {
+		for (int i = 0; i < game->ui.board.numStagedTiles; i++) {
+			StagedTile *st = game->ui.board.stagedTiles[i];
+			SDL_RenderCopy(game->renderer, game->letters[st->tile].tileTex, NULL, &game->ui.board.boardRects[st->x_pos][st->y_pos]);
+		}
+	}
+
+	SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
 
     // check for selectedTile, render it if so
     if (game->ui.tilebar.highlightedRectIndex >= 0) {
@@ -104,7 +142,7 @@ void Render(Game *game) {
     }
     // render the tiles in the players tile bar
 	for (int i = 0; i < 7; i ++) { 
-		SDL_RenderCopy(game->renderer, game->ui.tilebar.playerTiles[i].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
+		SDL_RenderCopy(game->renderer, game->letters[game->ui.tilebar.playerTiles[i]].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
 	}
 
 	// nothing should be after render present
