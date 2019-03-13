@@ -75,7 +75,8 @@ void HandleEvents(Game* game) {
 					game->ui.tilebar.highlightedRectIndex = mousepos.x / 100;
 					game->tileSelected = true;
 					game->selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex];
-					printf("%d", game->selectedTile);
+					printf("Selected tile %d--- ", game->ui.tilebar.highlightedRectIndex);
+					// printf("%d", game->selectedTile);
 				} else {
 					// game->ui.tilebar.highlightedRectIndex = -1;
 					// game->tileSelected = false;
@@ -125,25 +126,39 @@ void Render(Game *game) {
 
 	// render the locked in tiles
 
+	// printf("####");
 
 	// render the staged tiles
 	if (game->ui.board.numStagedTiles != 0) {
+		// printf("Do we segfault here?\n");
 		for (int i = 0; i < game->ui.board.numStagedTiles; i++) {
+
 			StagedTile *st = game->ui.board.stagedTiles[i];
 			SDL_RenderCopy(game->renderer, game->letters[st->tile].tileTex, NULL, &game->ui.board.boardRects[st->x_pos][st->y_pos]);
 		}
 	}
 
+
+
 	SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
+
+
 
     // check for selectedTile, render it if so
     if (game->ui.tilebar.highlightedRectIndex >= 0) {
     	SDL_RenderCopy(game->renderer, game->ui.tilebar.highlightTex, NULL, &game->ui.tilebar.tileSlotRects[game->ui.tilebar.highlightedRectIndex]);   	
     }
+
+
     // render the tiles in the players tile bar
 	for (int i = 0; i < 7; i ++) { 
+		printf("DO WE SEGFAULT HERE? -- i = %d \n", i);
+		printf("game->ui.tilebar.playertiles[i] = %d\n", game->ui.tilebar.playerTiles[i]);
 		SDL_RenderCopy(game->renderer, game->letters[game->ui.tilebar.playerTiles[i]].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
 	}
+
+
+
 
 	// nothing should be after render present
 	SDL_RenderPresent(game->renderer);

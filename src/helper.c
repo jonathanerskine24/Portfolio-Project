@@ -32,9 +32,11 @@ void PlaceTile(Game *game) {
 	// // printf("%d", game->ui.board.numStagedTiles);
 	game->ui.board.numStagedTiles++;
 	// // printf(" %d\n", game->ui.board.numStagedTiles);
-
+	printf("~~%d   \n", game->ui.board.numStagedTiles);
+	fflush(stdout);
 	// game->selectedTile = 0;
 	// game->tileSelected = false;
+	printf("TEST\n");
 	return;
 
 }
