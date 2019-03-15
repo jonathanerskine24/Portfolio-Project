@@ -32,7 +32,6 @@ typedef struct TileSlot {
 	Tile *tile;
 } TileSlot;
 
-
 typedef struct Board {
 	SDL_Texture *boardTileTex;
 	SDL_Texture *centerTileTex;
@@ -42,7 +41,7 @@ typedef struct Board {
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
 	int numStagedTiles;
-	StagedTile **stagedTiles[];
+	StagedTile *stagedTiles[100];
 } Board;
 
 typedef struct TileBar {
@@ -56,8 +55,8 @@ typedef struct TileBar {
 } TileBar;
 
 typedef struct UI {
-	Board board;
 	TileBar tilebar;
+	Board board;
 } UI;
 
 typedef struct Position {
@@ -70,11 +69,11 @@ typedef struct Game {
 	GameParameters params;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	UI ui;
 	Tile *letters;
 	int selectedTile;
 	Position selectedBoardTile;
 	bool isRunning;
 	bool tileSelected;
+	UI ui;
 } Game;
 

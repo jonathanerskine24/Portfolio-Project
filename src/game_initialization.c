@@ -68,11 +68,11 @@ void InitBoardRects(Game *game) {
 void InitBoard(Game *game) {
 	InitBoardRects(game);
 
-	// game->ui.board.stagedTiles = (StagedTile*)malloc(sizeof(StagedTile*) * game->board_size);
 
-	for (int i = 0; i < game->board_size; i++) {
-		game->ui.board.stagedTiles[i] = malloc(sizeof(StagedTile*));
-	}
+
+	// for (int i = 0; i < game->board_size; i++) {
+	// 	game->ui.board.stagedTiles[i] = malloc(sizeof(StagedTile*));
+	// }
 
 	game->ui.board.numStagedTiles = 0;
 	return;
