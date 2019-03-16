@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project 
-OBJS = src/main.c src/game.c src/game_initialization.c src/user_interface.c src/helper.c
-OBJS2 = bin/main.o bin/game.o bin/game_initialization.o bin/user_interface.o bin/helper.o
+OBJS = src/main.c src/game.c src/game_initialization.c src/user_interface.c src/helper.c src/hash.c
+OBJS2 = bin/main.o bin/game.o bin/game_initialization.o bin/user_interface.o bin/helper.o bin/hash.o
 #CC specifies which compiler we're using 
 CC = gcc
 #COMPILER_FLAGS specifies the additional compilation options we're using 
@@ -17,6 +17,7 @@ all:
 	cc src/game_initialization.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	cc src/user_interface.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	cc src/helper.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	cc src/hash.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/board.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/piece.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	# g++ src/TextureManager.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c

@@ -125,12 +125,15 @@ void Render(Game *game) {
     		SDL_RenderCopy(game->renderer, game->ui.board.boardTileTex, NULL, &game->ui.board.boardRects[i][j]);
     	}
 	}
-
 	SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
+
+
+
 	// printf("SEGFAULT TEST 2\n");
 	// render the locked in tiles
 
-	// printf("####");
+
+
 
 	// render the staged tiles
 	if (game->ui.board.numStagedTiles != 0) {
@@ -138,9 +141,9 @@ void Render(Game *game) {
 		for (int i = 0; i < game->ui.board.numStagedTiles; i++) {
 			// printf("%d segfault?\n", i);
 			StagedTile *st = game->ui.board.stagedTiles[i];
-			if (i == 3) {
-				// printf("%d %d %d\n", st->tile, st->x_pos, st->y_pos);
-			}
+			// if (i == 3) {
+			// 	// printf("%d %d %d\n", st->tile, st->x_pos, st->y_pos);
+			// }
 			SDL_RenderCopy(game->renderer, game->letters[st->tile].tileTex, NULL, &game->ui.board.boardRects[st->x_pos][st->y_pos]);
 		}
 	}

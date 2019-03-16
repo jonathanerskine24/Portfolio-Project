@@ -95,6 +95,8 @@ void InitializeGame(Game *game) {
 	printf("Initializing board...\n");
 	InitTileBarRects(game);
 	InitBoardRects(game);
+	printf("Loading dictionary...\n");
+	LoadDictionary();
 	printf("Done.\n");
 
 }
