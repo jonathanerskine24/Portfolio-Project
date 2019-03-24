@@ -5,7 +5,7 @@
 #include "../include/types.h"
 #include "../include/helper.h"
 
-
+int numcount = 0;
 
 SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
         SDL_Surface *tempSurface = IMG_Load(texture);
@@ -111,12 +111,14 @@ void HandleEvents(Game* game) {
 }
 
 void Update(Game * game) {
+	// numcount++;
 	// game->highlitedTile = game->ui.tilebar.highlightedRectIndex;
 	return;
 }
 
 void Render(Game *game) {
 
+	// printf("%d\n", numcount);
 
 	// printf("SEGFAULT TEST 1\n");
 
@@ -125,17 +127,18 @@ void Render(Game *game) {
 	// past this line is where stuff to render goes
 
 	// render the board
+	// including locked in tiles
+	SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
     for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 15; j++) {
-    		SDL_RenderCopy(game->renderer, game->ui.board.boardTileTex, NULL, &game->ui.board.boardRects[i][j]);
+			if (game->ui.board.boardTiles[i][j].occupied == true) {
+				SDL_RenderCopy(game->renderer, game->ui.board.boardTiles[i][j].tile->tileTex, NULL, &game->ui.board.boardRects[i][j]);
+			} else {
+    			SDL_RenderCopy(game->renderer, game->ui.board.boardTileTex, NULL, &game->ui.board.boardRects[i][j]);
+				if (i == 7 && j == 7) SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
+			}
     	}
 	}
-	SDL_RenderCopy(game->renderer, game->ui.board.centerTileTex, NULL, &game->ui.board.boardRects[7][7]);
-
-
-
-	// printf("SEGFAULT TEST 2\n");
-	// render the locked in tiles
 
 	// render the staged tiles
 	if (game->ui.board.numStagedTiles != 0) {

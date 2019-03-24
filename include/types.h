@@ -49,6 +49,7 @@ typedef struct TileSlot {
 
 typedef struct Board {
 	int numStagedTiles;
+	int center;
 	SDL_Texture *boardTileTex;
 	SDL_Texture *centerTileTex;
 	SDL_Rect boardRect;

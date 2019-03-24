@@ -24,6 +24,7 @@ int main(int argc, char** argv[]) {
 
 	game = (Game*)malloc(sizeof(Game));
 	game->gameinfo.board_size = board_size;
+	game->ui.board.center = board_size / 2;
 
 
 
@@ -39,6 +40,8 @@ int main(int argc, char** argv[]) {
 
 
 	while (game->gameinfo.isRunning) {
+
+
 		frameStart = SDL_GetTicks();
 
 		HandleEvents(game);
@@ -46,6 +49,8 @@ int main(int argc, char** argv[]) {
 		Render(game);
 
 		frameTime = SDL_GetTicks() - frameStart;
+
+
 
 		if (frameDelay > frameTime) SDL_Delay(frameDelay-frameTime);
 	}

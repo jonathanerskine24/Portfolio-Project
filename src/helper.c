@@ -6,7 +6,7 @@
 void append(char *s, char c) {
     int len = strlen(s);
     s[len] = c;
-    s[len+1] = "\0";
+    s[len+1] = '\0';
     return;
 }
 
@@ -65,18 +65,36 @@ bool CheckTilePlacement(StagedTile *st[], int *location, bool *wordDirection) {
 	if (st[0] == NULL) return -1;
 
 	int x = 0; int y = 0;
+
 	bool xflag = true;
 	bool yflag = true;
 
 
 	for (int i = 0; i < 7; i++) {
+
+		printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__ );
 		if (st[i] == NULL) break;
+
+		printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
+
 		if (i == 0) {
+			printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
 			x = st[i]->x_pos;
 			y = st[i]->y_pos;
 		} else {
-			if (st[x]->x_pos != x) xflag = false;
-			if (st[x]->y_pos != y) yflag = false;
+			printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
+			if (st[i]->x_pos != x) {
+				printf("x: %d not equal to %d", st[i]->x_pos, x);
+				printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n,", __FILE__, __func__, __LINE__, i);
+				xflag = false;
+			}
+			if (st[i]->y_pos != y) {
+				printf("Y: %d not equal to %d", st[i]->y_pos, y);
+				printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n,", __FILE__, __func__, __LINE__, i);
+				yflag = false;
+			}
+			printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
+			
 		}
 	}
 
@@ -84,18 +102,21 @@ bool CheckTilePlacement(StagedTile *st[], int *location, bool *wordDirection) {
 	printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__ );
 
 	if (xflag) {
-		location = x;
-		wordDirection = VERTICAL;
+		*location = x;
+		*wordDirection = VERTICAL;
+		printf("Direction = %d Location = %d \n", *wordDirection, *location);
 		printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__ );
 		return true;
 	} else if (yflag) {
-		location = y;
-		wordDirection = HORIZONTAL;
+		*location = y;
+		*wordDirection = HORIZONTAL;
+		printf("Direction = %d Location = %d \n", wordDirection, location);
 		printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__ );
 		return true;
 	} else {
-		location = -1;
-		wordDirection = false;
+		*location = -1;
+		*wordDirection = false;
+		printf("Direction = %d Location = %d \n", wordDirection, location);
 		printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__ );
 		return false;
 	}
@@ -151,6 +172,11 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 		bool leftTile = board->boardTiles[x-1][y].occupied;
 		bool rightTile = board->boardTiles[x+1][y].occupied;
 	
+		if (x == board->center && y == board->center) {
+			return CT_VALID;
+		}
+
+
 		// checking both sides
 		if (leftTile && rightTile) {
 			return CT_INVALID;
@@ -208,55 +234,6 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 
 	}
 
-
-
-
-	// // checking if connected above
-	// if (board->boardTiles[x][y - 1].occupied == true) {
-	// 	AdjacencyNode *head = board->boardTiles[x][y-1].adjList;
-	// 	while (head->next != NULL || head->direction != HORIZONTAL) {
-	// 		head = head->next;
-	// 	}
-	// 	char *word[100];
-	// 	if (head->direction == HORIZONTAL) {
-	// 		strcpy(word, head->word);
-	// 		append(word, ALPHABET[board->boardTiles[x][y].stval]);
-	// 		if (validate(word)) return true;
-	// 		else return false;
-	// 	} else {
-	// 		strcpy(word, board->boardTiles[x][y-1])
-	// 		append(word, board->boardTiles[x][y].tile.letter);
-	// 		if (validate(word)) return true;
-	// 		else return false;
-	// 	}
-
-	// // checking if connected below
-	// } else if (board->boardTiles[x][y + 1].occupied == true) {
-	// 	AdjacencyNode *head = board->boardTiles[x][y+1].adjList;
-	// 	while (head->next != NULL || head->direction != HORIZONTAL) {
-	// 		head = head->next;
-	// 	}
-	// 	char *word[100];
-	// 	if (head->direction == HORIZONTAL) {
-	// 		strcpy(word, ALPHABET[board->boardTiles[x][x].stval]);
-	// 		strcat(word, head->word);
-	// 		if (validate(word)) return true;
-	// 		else return false;
-	// 	} else {
-	// 		append(word, board->boardTiles[x][y - 1].tile.letter);
-	// 		if (validate(word)) return true;
-	// 		else return false;
-	// 	}
-	
-	// //checking if connected to the left
-	// } else if (board->boardTiles[x - 1][y].occupied == true) {
-
-	// // checking if connected to the right	
-	// } else if (board->boardTiles[x + 1][y].occupied == true) {
-
-	// } else {
-	// 	return false;
-	// }
 }
 
 void Lock(Board *board, StagedTile *st, Tile *letters) {
@@ -266,7 +243,7 @@ void Lock(Board *board, StagedTile *st, Tile *letters) {
 	board->boardTiles[x][y].occupied = true;
 	board->boardTiles[x][y].selected = false;
 	board->boardTiles[x][y].tile = &letters[st->tile];
-
+	board->numStagedTiles--;
 }
 
 void SubmitWord(UserInterface *ui) {
@@ -274,38 +251,79 @@ void SubmitWord(UserInterface *ui) {
 	// StagedTile *st[] = board->stagedTiles;
 	int location; bool direction;
 	char *word[100];
-
+	word[0] = '\0';
 	// direction = true means vertical placement
 	// direction = false means horizontal placement
 
 	bool validPlacement = CheckTilePlacement(&board->stagedTiles, &location, &direction);	
 
+	printf("Direction = %d Location = %d \n", direction, location);
+
 	bool oneConnectionMinimum = false;
+
+	//	NOTE
+	//	SEEMS TO WORK FOR PLACING THE FIRST WORD VERTICALLY
+	//	HORIZONTAL NOT DONE
+	//	ADDING SECOND VERTICAL WORD DOESNT WORK
+	//	THINK IT HAS SOMETHING TO DO WITH FIRST CHECK CONNECTION
 
 	if (validPlacement) {
 
 		if (direction == VERTICAL) {
+			printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 			int low = findLow(&board->stagedTiles, VERTICAL);
+			printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 			int high = findHigh(&board->stagedTiles, VERTICAL);
+			printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 			for (int i = low; i <= high; i ++) {
+				printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i - low);
 				int r = CheckConnection(board, location, i, VERTICAL);
-				if (r == CT_VALID) oneConnectionMinimum = true;
-				else if (r == CT_INVALID) break;
-				else {
-					strcat(word, ALPHABET[board->boardTiles[location][i].stval]);
+				printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i - low);
+				if (r == CT_VALID) {
+					printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i - low);
+					printf("Location: %d i: %d\n", location, i);
+					printf("%d\n", board->boardTiles[location][i].stval);
+					printf("%c\n", ALPHABET[board->boardTiles[location][i].stval]);
+					append(word, ALPHABET[board->boardTiles[location][i].stval]);
+					oneConnectionMinimum = true;
+				}
+				else if (r == CT_INVALID) {
+					printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i - low);
+					printf("INVALID\n");
+					break;
+				}
+				else { 
+					printf("FILE: %s, FUNCTION: %s, LINE: %d ITERATION: %d\n", __FILE__, __func__, __LINE__, i - low);
+					printf("Location: %d i: %d\n", location, i);
+					printf("%d\n", board->boardTiles[location][i].stval);
+					printf("%c\n", ALPHABET[board->boardTiles[location][i].stval]);
+					append(word, ALPHABET[board->boardTiles[location][i].stval]);
+					printf("%s\n", word);
 				}
 			}
 
+			printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 			if (oneConnectionMinimum) {
+				printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
+				printf("%s\n", word);
+				fflush(stdout);
 				if (validate(word)) {
+					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 					for (int i = 0; i < 7; i ++){
-						if (board->stagedTiles[i] == NULL) break;
-						else Lock(board, board->stagedTiles[i], ui->letters);
+						if (board->stagedTiles[i] == NULL) break; 
+						printf("FILE: %s, FUNCTION: %s, LINE: %d, ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
+						Lock(board, board->stagedTiles[i], ui->letters);
+						board->stagedTiles[i] = NULL;
 					}
+					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
+					if (board->stagedTiles[0] != NULL) printf("Didn't clear staged tiles\n");
+					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 				}
 			}
 
 		} else if (direction == HORIZONTAL) {
+			printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
+
 			// int low = findLow(st, HORIZONTAL);
 			// int high = findHigh(st, HORIZONTAL);
 
@@ -314,6 +332,7 @@ void SubmitWord(UserInterface *ui) {
 	}
 
 }
+
 
 
 
