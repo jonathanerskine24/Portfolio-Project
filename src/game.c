@@ -6,6 +6,7 @@
 #include "../include/helper.h"
 
 
+
 SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
         SDL_Surface *tempSurface = IMG_Load(texture);
         SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, tempSurface);
@@ -43,10 +44,12 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 		InitializeGame(game);
 
 	} else {
-		game->isRunning = false;
+		game->gameinfo.isRunning = false;
 	}
 }
 
+
+// TODO: fix bug that places an A on the board if no tile is selected
 void HandleEvents(Game* game) {
 
 	SDL_Event event;
@@ -54,7 +57,7 @@ void HandleEvents(Game* game) {
 
 	switch (event.type) {
 		case SDL_QUIT:
-			game->isRunning = false;
+			game->gameinfo.isRunning = false;
 			break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
@@ -72,24 +75,26 @@ void HandleEvents(Game* game) {
 
 				// check if clicked tile in hand
 				if (mousepos.y > 810) {
-					game->ui.tilebar.highlightedRectIndex = mousepos.x / 100;
-					game->tileSelected = true;
-					game->selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex];
-					// printf("Selected tile %d--- ", game->ui.tilebar.highlightedRectIndex);
-					// printf("%d", game->selectedTile);
+					if (mousepos.x < 700) {
+						game->ui.tilebar.highlightedRectIndex = mousepos.x / 100;
+						game->gameinfo.tileSelected = true;
+						game->gameinfo.selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex];
+					}  else if (CheckClick(mousepos, game->ui.tilebar.submitButtonRect)) {
+						printf("Submit\n");
+						SubmitWord(&game->ui);
+					}
+
 				} else {
 					// game->ui.tilebar.highlightedRectIndex = -1;
-					// game->tileSelected = false;
+					// game->gameinfo.tileSelected = false;
 				}
 
-
-
 				// check if selected board tile
-				if ((game->tileSelected) && (mousepos.y < 810)) {
+				if ((game->gameinfo.tileSelected) && (mousepos.y < 810)) {
 					// printf("!\n");
 					SelectBoardTile(game, mousepos);
-					PlaceTile(game);
-					game->tileSelected = false;
+					PlaceTile(&game->gameinfo, &game->ui.board);
+					game->gameinfo.tileSelected = false;
 					game->ui.tilebar.highlightedRectIndex = -1;
 				}
 
@@ -132,9 +137,6 @@ void Render(Game *game) {
 	// printf("SEGFAULT TEST 2\n");
 	// render the locked in tiles
 
-
-
-
 	// render the staged tiles
 	if (game->ui.board.numStagedTiles != 0) {
 		// printf("Do we segfault here? num staged = %d\n", game->ui.board.numStagedTiles);
@@ -144,15 +146,15 @@ void Render(Game *game) {
 			// if (i == 3) {
 			// 	// printf("%d %d %d\n", st->tile, st->x_pos, st->y_pos);
 			// }
-			SDL_RenderCopy(game->renderer, game->letters[st->tile].tileTex, NULL, &game->ui.board.boardRects[st->x_pos][st->y_pos]);
+			SDL_RenderCopy(game->renderer, game->ui.letters[st->tile].tileTex, NULL, &game->ui.board.boardRects[st->x_pos][st->y_pos]);
 		}
 	}
-
-
+	
 	// printf("SEGFAULT TEST 3\n");
 
+	// render UI
 
-
+	SDL_RenderCopy(game->renderer, game->ui.tilebar.submitButtonTex, NULL, &game->ui.tilebar.submitButtonRect);
 
     // check for selectedTile, render it if so
     if (game->ui.tilebar.highlightedRectIndex >= 0) {
@@ -164,7 +166,7 @@ void Render(Game *game) {
 	for (int i = 0; i < 7; i ++) { 
 		// printf("DO WE SEGFAULT HERE? -- i = %d \n", i);
 		// printf("game->ui.tilebar.playertiles[i] = %d\n", game->ui.tilebar.playerTiles[i]);
-		SDL_RenderCopy(game->renderer, game->letters[game->ui.tilebar.playerTiles[i]].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
+		SDL_RenderCopy(game->renderer, game->ui.letters[game->ui.tilebar.playerTiles[i]].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
 	}
 
  
@@ -185,8 +187,6 @@ void Clean(Game* game) {
 	printf("Game cleaned.\n");
 	return;
 }
-
-
 
 // check if mouse has clicked an item in my players hand
 void checkPlayerTileClick(Position mousePos, Tile *location) {

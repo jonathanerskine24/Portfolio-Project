@@ -10,7 +10,7 @@ typedef struct Node {
 Node *validWords[500000];
 
 // confirm whether a word is in the table
-bool validate(int r, char *s);
+bool validate(char *s);
 
 // insert a word into the table
 void insert(int r, char *s);
@@ -25,3 +25,4 @@ void LoadDictionary(void);
 
 // used to print valid or invalid for a word, terminal use only
 void check(char *word);
+

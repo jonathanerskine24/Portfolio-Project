@@ -2,6 +2,20 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "graph.h"
+
+static char ALPHABET[26] = "abcdefghijklmnopqrstuvwxyz";
+
+enum direction {
+	VERTICAL = true,
+	HORIZONTAL = false
+};
+
+enum connectType {
+	CT_INVALID = 0,
+	CT_VALID = 1,
+	CT_NONE = 2
+};
 
 typedef struct GameParameters {
 	int BOARD_WIDTH;
@@ -26,13 +40,15 @@ typedef struct StagedTile {
 typedef struct TileSlot {
 	int x_coord;
 	int y_coord;
-	bool validConnection;
+	int stval; // staged tile val
 	bool occupied;
 	bool selected;
 	Tile *tile;
+	AdjacencyNode *adjList;
 } TileSlot;
 
 typedef struct Board {
+	int numStagedTiles;
 	SDL_Texture *boardTileTex;
 	SDL_Texture *centerTileTex;
 	SDL_Rect boardRect;
@@ -40,40 +56,51 @@ typedef struct Board {
 	// TileSlot *boardTiles[][];
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
-	int numStagedTiles;
 	StagedTile *stagedTiles[100];
 } Board;
 
 typedef struct TileBar {
+	int highlightedRectIndex;
+	int playerTiles[7];
 	SDL_Texture *tileBarTex;
 	SDL_Texture *highlightTex;
-	// Tile *playerTiles;
-	int playerTiles[7];
+	SDL_Texture *submitButtonTex;
+	SDL_Rect submitButtonRect;
 	SDL_Rect tileRects[7];
 	SDL_Rect tileSlotRects[7];
-	int highlightedRectIndex;
 } TileBar;
 
-typedef struct UI {
+typedef struct UserInterface {
 	TileBar tilebar;
 	Board board;
-} UI;
+	Tile *letters;
+} UserInterface;
 
 typedef struct Position {
 	int x;
 	int y;
 } Position;
 
-typedef struct Game {
+// typedef struct GameGraphics {
+// 	SDL_Window *window;
+// 	SDL_Renderer *renderer;
+// 	// Tile *letters;
+// } GameGraphics;
+
+typedef struct GameInfo {
 	int board_size;
-	GameParameters params;
-	SDL_Window *window;
-	SDL_Renderer *renderer;
-	Tile *letters;
 	int selectedTile;
-	Position selectedBoardTile;
 	bool isRunning;
 	bool tileSelected;
-	UI ui;
+	bool wordDirection; // 0 = up down 1 = left right
+	Position selectedBoardTile;
+	GameParameters params;
+} GameInfo;
+
+typedef struct Game {
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+	GameInfo gameinfo;
+	UserInterface ui;
 } Game;
 

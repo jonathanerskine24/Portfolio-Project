@@ -25,6 +25,20 @@ all:
 	cc $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
 	# make clean
 	clear
+optimize:
+	cc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	cc src/game.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	cc src/game_initialization.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	cc src/user_interface.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	cc src/helper.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	cc src/hash.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c -O
+	# g++ src/board.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	# g++ src/piece.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	# g++ src/TextureManager.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
+	make clean
+	cc $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o scrabble
+	# make clean
+	clear	
 main:
 	cc src/main.c $(COMPILER_FLAGS) $(LINKER_FLAGS) -c
 	make clean

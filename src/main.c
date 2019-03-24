@@ -6,8 +6,8 @@
 
 int main(int argc, char** argv[]) {
 
-	int board_size = atoi(argv[1]);
-
+	// int board_size = atoi(argv[1]);
+	int board_size = 15;
 	// if (board_size % 2 == 0) {
 	// 	printf("Please select an odd number for board size\n");
 	// 	return 0;
@@ -23,21 +23,22 @@ int main(int argc, char** argv[]) {
 	Game *game;
 
 	game = (Game*)malloc(sizeof(Game));
-	game->board_size = board_size;
+	game->gameinfo.board_size = board_size;
 
 
 
-	game->params.BOARD_WIDTH = 810;
-	game->params.BOARD_HEIGHT = 810;
+	game->gameinfo.params.BOARD_WIDTH = 810;
+	game->gameinfo.params.BOARD_HEIGHT = 810;
 	// game->params.BOARD_WIDTH = 54 * board_size;
 	// game->params.BOARD_HEIGHT = 54 * board_size;
-	game->params.WINDOW_WIDTH = game->params.BOARD_WIDTH + 100;
-	game->params.WINDOW_HEIGHT = game->params.BOARD_HEIGHT + 100;
+	game->gameinfo.params.WINDOW_WIDTH = game->gameinfo.params.BOARD_WIDTH + 100;
+	game->gameinfo.params.WINDOW_HEIGHT = game->gameinfo.params.BOARD_HEIGHT + 100;
 
-	Init(game, "SCRABBLE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, game->params.BOARD_WIDTH, game->params.BOARD_HEIGHT + 100, false); // W then H
+	Init(game, "SCRABBLE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, game->gameinfo.params.BOARD_WIDTH, game->gameinfo.params.BOARD_HEIGHT + 100, false); // W then H
 	Render(game);
 
-	while (game->isRunning) {
+
+	while (game->gameinfo.isRunning) {
 		frameStart = SDL_GetTicks();
 
 		HandleEvents(game);

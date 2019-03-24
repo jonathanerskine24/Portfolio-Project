@@ -10,29 +10,30 @@
 // ideally with the word list... make it neat
 
 
-bool validate(int r, char *s) {
+bool validate(char *s) {
 
-	printf("validating %s...\n", s);
-
-	if (validWords[r] == NULL) {
+	unsigned long result = hash(s);
+	int index = result % 500000;
+	
+	if (validWords[index] == NULL) {
 		// printf("invalid.\n");
 		return false;
 	}
 
 
-	if (strcmp(validWords[r]->word, s)==0) {
+	if (strcmp(validWords[index]->word, s)==0) {
 		// printf("valid!\n");
-		printf("%s in slot %d, compared to %s\n", validWords[r]->word, r, s);
-		printf("%s matches %s\n", validWords[r]->word, s);
+		// printf("%s in slot %d, compared to %s\n", validWords[index]->word, index, s);
+		// printf("%s matches %s\n", validWords[index]->word, s);
 		return true;
 	}
 	else {
 		// printf("****");
-		Node *h = validWords[r];
+		Node *h = validWords[index];
 		while (h->next != NULL) {
 			h = h->next;
 			if (strcmp(h->word, s)==0) {
-				printf("%s in slot %d, compared to %s\n", h->word, r, s);
+				// printf("%s in slot %d, compared to %s\n", h->word, index, s);
 
 				// printf("~~~%s~~~\n", h->word);
 				// printf("valid!\n");
@@ -41,7 +42,7 @@ bool validate(int r, char *s) {
 		}
 		// printf("invalid.\n");
 	}
-	// return false;
+	return false;
 }
 
 void insert(int r, char *s) {
@@ -100,16 +101,16 @@ void hash_and_insert(char *word) {
 	return;
 }
 
-void check(char *word) {
-	// char x[100];
-	// printf("\nInsert a word to check: ");
-	// scanf("%s", x);
-	unsigned long result = hash(word);
-	int r = result % 500000;
-	if (validate(r, word)) printf("valid\n");
-	else printf("invalid\n");
-	return;
-}
+// void check(char *word) {
+// 	// char x[100];
+// 	// printf("\nInsert a word to check: ");
+// 	// scanf("%s", x);
+// 	unsigned long result = hash(word);
+// 	int r = result % 500000;
+// 	if (validate(r, word)) printf("valid\n");
+// 	else printf("invalid\n");
+// 	return;
+// }
 
 void LoadDictionary(void) {
 	FILE *words;
@@ -121,45 +122,22 @@ void LoadDictionary(void) {
 	} 
 	// else printf("Successfully opened file.\n");
 	// printf("Opened!");
-	fflush(stdout);
+	// fflush(stdout);
 	while (!feof(words)) {
-		// printf("!");
-		// fflush(stdout);
 		char s[100];
-		// printf("%s ", s);
 		fscanf(words, "%s", s);
 		hash_and_insert(s);
 	}
 	fclose(words);
 }
 
-// int main(void) {
-
-// 	char query[10];
 
 
 
-// 	FILE *words;
-// 	// char s[100];
-// 	words = fopen("words_alpha.txt", "r");
-// 	while (!feof(words)) {
-// 		char s[100];
-// 		// printf("%s ", s);
-// 		fscanf(words, "%s", s);
-// 		hash_and_insert(s);
-// 	}
-// 	fclose(words);
-// 	int i = 0;
-// 	while (true) {
-// 		char s[100];
-// 		printf("Search for a word: ");
-// 		scanf("%s", query);
-// 		check(query);
-// 		// printf("Check what is in a slot: ");
-// 		// scanf("%d", &i);
-// 		// printf("%s is in slot %d", validWords[i]->word, i);
-// 	}
 
 
-// 	return 0;
-// }
+
+
+
+
+

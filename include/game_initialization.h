@@ -15,3 +15,5 @@ void InitTileBarRects(Game *game);
 void InitBoardRects(Game *game);
 
 void InitializeGame(Game *game);
+
+void LoadGameTextures(UserInterface*, SDL_Renderer*);
