@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "graph.h"
 
+int BOARD_SIZE;
 static char ALPHABET[26] = "abcdefghijklmnopqrstuvwxyz";
 
 enum direction {
@@ -57,6 +58,7 @@ typedef struct Board {
 	// TileSlot *boardTiles[][];
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
+	AdjacencyNode *tempAdjacencies;
 	StagedTile *stagedTiles[100];
 } Board;
 

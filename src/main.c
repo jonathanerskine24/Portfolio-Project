@@ -7,7 +7,7 @@
 int main(int argc, char** argv[]) {
 
 	// int board_size = atoi(argv[1]);
-	int board_size = 15;
+	BOARD_SIZE = atoi(argv[1]);
 	// if (board_size % 2 == 0) {
 	// 	printf("Please select an odd number for board size\n");
 	// 	return 0;
@@ -23,8 +23,10 @@ int main(int argc, char** argv[]) {
 	Game *game;
 
 	game = (Game*)malloc(sizeof(Game));
-	game->gameinfo.board_size = board_size;
-	game->ui.board.center = board_size / 2;
+	game->gameinfo.board_size = BOARD_SIZE;
+	game->ui.board.center = BOARD_SIZE / 2;
+
+	
 
 
 

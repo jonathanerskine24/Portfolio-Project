@@ -15,7 +15,7 @@ void LoadTiles(Game *game) {
 	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
 
 	for (int i = 0; i<26; i++) {
-		array[i].letter = 65 + i;
+		array[i].letter = 97 + i;
 		array[i].tileRect.w = 100;
 		array[i].tileRect.h = 100;
 	}
@@ -86,7 +86,10 @@ void InitBoard(Game *game) {
 	// 	game->ui.board.stagedTiles[i] = malloc(sizeof(StagedTile*));
 	// }
 
+
+
 	game->ui.board.numStagedTiles = 0;
+	game->ui.board.tempAdjacencies = malloc(sizeof(AdjacencyNode));
 	return;
 }
 
