@@ -3,15 +3,15 @@
 #include "../include/game2.h"
 
 
-
 int main(int argc, char** argv[]) {
 
-	// int board_size = atoi(argv[1]);
+
 	BOARD_SIZE = atoi(argv[1]);
-	// if (board_size % 2 == 0) {
-	// 	printf("Please select an odd number for board size\n");
-	// 	return 0;
-	// }
+
+	if (BOARD_SIZE % 2 == 0) {
+		printf("Please select an odd number for board size\n");
+		return 1;
+	}
 
 
 	const int FPS = 60;
@@ -27,9 +27,6 @@ int main(int argc, char** argv[]) {
 	game->ui.board.center = BOARD_SIZE / 2;
 
 	
-
-
-
 	game->gameinfo.params.BOARD_WIDTH = 810;
 	game->gameinfo.params.BOARD_HEIGHT = 810;
 	// game->params.BOARD_WIDTH = 54 * board_size;
@@ -51,8 +48,6 @@ int main(int argc, char** argv[]) {
 		Render(game);
 
 		frameTime = SDL_GetTicks() - frameStart;
-
-
 
 		if (frameDelay > frameTime) SDL_Delay(frameDelay-frameTime);
 	}

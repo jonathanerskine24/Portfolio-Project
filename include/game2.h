@@ -17,6 +17,4 @@ void Clean(Game *game);
 
 SDL_Texture *LoadTexture(const char*, SDL_Renderer*);
 
-// put this shit somewhere else
-
 void checkPlayerTileClick(Position mousePos, Tile *location);

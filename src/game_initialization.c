@@ -20,29 +20,85 @@ void LoadTiles(Game *game) {
 		array[i].tileRect.h = 100;
 	}
 
-	array[0].tileTex = LoadTexture("resources/tiles/A.png", game->renderer);
-	array[1].tileTex = LoadTexture("resources/tiles/B.png", game->renderer);
-	array[2].tileTex = LoadTexture("resources/tiles/C.png", game->renderer);
-	array[3].tileTex = LoadTexture("resources/tiles/D.png", game->renderer);
-	array[4].tileTex = LoadTexture("resources/tiles/E.png", game->renderer);
-	array[5].tileTex = LoadTexture("resources/tiles/F.png", game->renderer);
-	array[6].tileTex = LoadTexture("resources/tiles/G.png", game->renderer);
-	array[7].tileTex = LoadTexture("resources/tiles/H.png", game->renderer);
+	array[0].tileTex = LoadTexture("resources/tiles/A_hand.png", game->renderer);
+	array[1].tileTex = LoadTexture("resources/tiles/B_hand.png", game->renderer);
+	array[2].tileTex = LoadTexture("resources/tiles/C_hand.png", game->renderer);
+	array[3].tileTex = LoadTexture("resources/tiles/D_hand.png", game->renderer);
+	array[4].tileTex = LoadTexture("resources/tiles/E_hand.png", game->renderer);
+	array[5].tileTex = LoadTexture("resources/tiles/F_hand.png", game->renderer);
+	array[6].tileTex = LoadTexture("resources/tiles/G_hand.png", game->renderer);
+	array[7].tileTex = LoadTexture("resources/tiles/H_hand.png", game->renderer);
+	array[8].tileTex = LoadTexture("resources/tiles/I_hand.png", game->renderer);
+	array[9].tileTex = LoadTexture("resources/tiles/J_hand.png", game->renderer);
+	array[10].tileTex = LoadTexture("resources/tiles/K_hand.png", game->renderer);
+	array[11].tileTex = LoadTexture("resources/tiles/L_hand.png", game->renderer);
+	array[12].tileTex = LoadTexture("resources/tiles/M_hand.png", game->renderer);
+	array[13].tileTex = LoadTexture("resources/tiles/N_hand.png", game->renderer);
+	array[14].tileTex = LoadTexture("resources/tiles/O_hand.png", game->renderer);
+	array[15].tileTex = LoadTexture("resources/tiles/P_hand.png", game->renderer);
+	array[16].tileTex = LoadTexture("resources/tiles/Q_hand.png", game->renderer);
+	array[17].tileTex = LoadTexture("resources/tiles/R_hand.png", game->renderer);
+	array[18].tileTex = LoadTexture("resources/tiles/S_hand.png", game->renderer);
+	array[19].tileTex = LoadTexture("resources/tiles/T_hand.png", game->renderer);
+	array[20].tileTex = LoadTexture("resources/tiles/U_hand.png", game->renderer);
+	array[21].tileTex = LoadTexture("resources/tiles/V_hand.png", game->renderer);
+	array[22].tileTex = LoadTexture("resources/tiles/W_hand.png", game->renderer);
+	array[23].tileTex = LoadTexture("resources/tiles/X_hand.png", game->renderer);
+	array[24].tileTex = LoadTexture("resources/tiles/Y_hand.png", game->renderer);
+	array[25].tileTex = LoadTexture("resources/tiles/Z_hand.png", game->renderer);
 
-
-	// for (int i = 0; i < 7; i++) {
-	// 	printf("%c", array[i].letter);
-	// }
 
 	game->ui.letters = array;
-	// return array;
 	return;
 }
+
+
+void LoadBoardTiles(Game *game) {
+	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
+
+	for (int i = 0; i<26; i++) {
+		array[i].letter = 97 + i;
+		array[i].tileRect.w = 100;
+		array[i].tileRect.h = 100;
+	}
+
+	array[0].tileTex = LoadTexture("resources/tiles/A_board.png", game->renderer);
+	array[1].tileTex = LoadTexture("resources/tiles/B_board.png", game->renderer);
+	array[2].tileTex = LoadTexture("resources/tiles/C_board.png", game->renderer);
+	array[3].tileTex = LoadTexture("resources/tiles/D_board.png", game->renderer);
+	array[4].tileTex = LoadTexture("resources/tiles/E_board.png", game->renderer);
+	array[5].tileTex = LoadTexture("resources/tiles/F_board.png", game->renderer);
+	array[6].tileTex = LoadTexture("resources/tiles/G_board.png", game->renderer);
+	array[7].tileTex = LoadTexture("resources/tiles/H_board.png", game->renderer);
+	array[8].tileTex = LoadTexture("resources/tiles/I_board.png", game->renderer);
+	array[9].tileTex = LoadTexture("resources/tiles/J_board.png", game->renderer);
+	array[10].tileTex = LoadTexture("resources/tiles/K_board.png", game->renderer);
+	array[11].tileTex = LoadTexture("resources/tiles/L_board.png", game->renderer);
+	array[12].tileTex = LoadTexture("resources/tiles/M_board.png", game->renderer);
+	array[13].tileTex = LoadTexture("resources/tiles/N_board.png", game->renderer);
+	array[14].tileTex = LoadTexture("resources/tiles/O_board.png", game->renderer);
+	array[15].tileTex = LoadTexture("resources/tiles/P_board.png", game->renderer);
+	array[16].tileTex = LoadTexture("resources/tiles/Q_board.png", game->renderer);
+	array[17].tileTex = LoadTexture("resources/tiles/R_board.png", game->renderer);
+	array[18].tileTex = LoadTexture("resources/tiles/S_board.png", game->renderer);
+	array[19].tileTex = LoadTexture("resources/tiles/T_board.png", game->renderer);
+	array[20].tileTex = LoadTexture("resources/tiles/U_board.png", game->renderer);
+	array[21].tileTex = LoadTexture("resources/tiles/V_board.png", game->renderer);
+	array[22].tileTex = LoadTexture("resources/tiles/W_board.png", game->renderer);
+	array[23].tileTex = LoadTexture("resources/tiles/X_board.png", game->renderer);
+	array[24].tileTex = LoadTexture("resources/tiles/Y_board.png", game->renderer);
+	array[25].tileTex = LoadTexture("resources/tiles/Z_board.png", game->renderer);
+
+
+	game->ui.boardTiles = array;
+	return;
+}
+
 
 void LoadPlayerTiles(Game *game) {
 
 	for (int i = 0; i<7; i++) {
-		game->ui.tilebar.playerTiles[i] = rand() % 8;
+		game->ui.tilebar.playerTiles[i] = rand() % 26;
 	}
 
 	return;
@@ -81,13 +137,6 @@ void InitBoard(Game *game) {
 	InitBoardRects(game);
 
 
-
-	// for (int i = 0; i < game->board_size; i++) {
-	// 	game->ui.board.stagedTiles[i] = malloc(sizeof(StagedTile*));
-	// }
-
-
-
 	game->ui.board.numStagedTiles = 0;
 	game->ui.board.tempAdjacencies = malloc(sizeof(AdjacencyNode));
 	return;
@@ -103,7 +152,6 @@ void LoadGameTextures(UserInterface* ui, SDL_Renderer* ren) {
 
 void InitializeGame(Game *game) {
 	game->gameinfo.isRunning = true;
-	// printf("FILE: %s FUNCTION: %s LINE: %d\n ", __FILE__, __func__, __LINE__);
 	game->gameinfo.tileSelected = false;
 	game->gameinfo.selectedTile = NULL;
 	game->ui.board.boardRect.w = game->gameinfo.params.BOARD_WIDTH;
@@ -113,6 +161,7 @@ void InitializeGame(Game *game) {
 	LoadGameTextures(&game->ui, game->renderer);
 	printf("Loading Tiles...\n");
 	LoadTiles(game);
+	LoadBoardTiles(game);
 	LoadPlayerTiles(game);
 	printf("Initializing board...\n");
 	InitTileBarRects(game);

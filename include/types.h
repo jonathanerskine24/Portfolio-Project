@@ -45,7 +45,8 @@ typedef struct TileSlot {
 	bool occupied;
 	bool selected;
 	Tile *tile;
-	AdjacencyNode *adjList;
+	AdjacencyNode *VerticalAdjacency;
+	AdjacencyNode *HorizontalAdjacency;
 } TileSlot;
 
 typedef struct Board {
@@ -77,6 +78,7 @@ typedef struct UserInterface {
 	TileBar tilebar;
 	Board board;
 	Tile *letters;
+	Tile *boardTiles;
 } UserInterface;
 
 typedef struct Position {
@@ -84,18 +86,12 @@ typedef struct Position {
 	int y;
 } Position;
 
-// typedef struct GameGraphics {
-// 	SDL_Window *window;
-// 	SDL_Renderer *renderer;
-// 	// Tile *letters;
-// } GameGraphics;
-
 typedef struct GameInfo {
 	int board_size;
 	int selectedTile;
 	bool isRunning;
 	bool tileSelected;
-	bool wordDirection; // 0 = up down 1 = left right
+	bool wordDirection; 
 	Position selectedBoardTile;
 	GameParameters params;
 } GameInfo;
