@@ -5,14 +5,26 @@
 #include "graph.h"
 #include "trie.h"
 
+// size of the board
 int BOARD_SIZE;
+
+// alphabet string used for appending letters by index
 static char ALPHABET[26] = "abcdefghijklmnopqrstuvwxyz";
+
+// root of the trie
 TrieNode *root;
+
+// tilebag
+static int tileBag[26] = {9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1 ,4, 2, 6, 8, 2, 1, 6, 6, 6, 4, 2, 2, 1, 2, 1};
+
+// num of tiles remaining
+int numTilesRemaining;
 
 enum direction {
 	VERTICAL = true,
 	HORIZONTAL = false
 };
+
 
 enum connectType {
 	CT_INVALID = 0,
@@ -65,9 +77,14 @@ typedef struct Board {
 	StagedTile *stagedTiles[100];
 } Board;
 
+typedef struct pTiles {
+	int val;
+	bool placed;
+} pTiles;
+
 typedef struct TileBar {
 	int highlightedRectIndex;
-	int playerTiles[7];
+	pTiles playerTiles[7];
 	SDL_Texture *tileBarTex;
 	SDL_Texture *highlightTex;
 	SDL_Texture *submitButtonTex;
@@ -75,6 +92,7 @@ typedef struct TileBar {
 	SDL_Rect tileRects[7];
 	SDL_Rect tileSlotRects[7];
 } TileBar;
+
 
 typedef struct UserInterface {
 	TileBar tilebar;

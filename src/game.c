@@ -4,6 +4,7 @@
 #include "../include/game_initialization.h"
 #include "../include/types.h"
 #include "../include/helper.h"
+#include "../include/tileplacement.h"
 
 int numcount = 0;
 
@@ -49,7 +50,6 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 }
 
 
-// TODO: fix bug that places an A on the board if no tile is selected
 void HandleEvents(Game* game) {
 
 	SDL_Event event;
@@ -76,9 +76,13 @@ void HandleEvents(Game* game) {
 				// check if clicked tile in hand
 				if (mousepos.y > 810) {
 					if (mousepos.x < 700) {
-						game->ui.tilebar.highlightedRectIndex = mousepos.x / 100;
-						game->gameinfo.tileSelected = true;
-						game->gameinfo.selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex];
+						int index = mousepos.x / 100;
+						if (game->ui.tilebar.playerTiles[index].placed == false) {
+							game->ui.tilebar.highlightedRectIndex = index;
+							game->gameinfo.tileSelected = true;
+							game->gameinfo.selectedTile = game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex].val;
+						}
+
 					}  else if (CheckClick(mousepos, game->ui.tilebar.submitButtonRect)) {
 						printf("Submit\n");
 						SubmitWord(&game->ui);
@@ -95,6 +99,7 @@ void HandleEvents(Game* game) {
 					SelectBoardTile(game, mousepos);
 					PlaceTile(&game->gameinfo, &game->ui.board);
 					game->gameinfo.tileSelected = false;
+					game->ui.tilebar.playerTiles[game->ui.tilebar.highlightedRectIndex].placed = true;
 					game->ui.tilebar.highlightedRectIndex = -1;
 				}
 
@@ -166,10 +171,10 @@ void Render(Game *game) {
 
 	// printf("SEGFAULT TEST 4\n");
     // render the tiles in the players tile bar
-	for (int i = 0; i < 7; i ++) { 
-		// printf("DO WE SEGFAULT HERE? -- i = %d \n", i);
-		// printf("game->ui.tilebar.playertiles[i] = %d\n", game->ui.tilebar.playerTiles[i]);
-		SDL_RenderCopy(game->renderer, game->ui.letters[game->ui.tilebar.playerTiles[i]].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
+	for (int i = 0; i < 7; i ++) {
+		if (game->ui.tilebar.playerTiles[i].placed == false) {
+			SDL_RenderCopy(game->renderer, game->ui.letters[game->ui.tilebar.playerTiles[i].val].tileTex, NULL, &game->ui.tilebar.tileRects[i]);
+		}
 	}
 
  

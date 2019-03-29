@@ -74,6 +74,8 @@ void LoadDictionaryTrie(void) {
 
 	while (!feof(words)) {
 		char s[100];
+        if (strcmp("m", s) == 0) printf("WTF\n");
+        if (strcmp("monkey", s) == 0) printf("test\n");
 		fscanf(words, "%s", s);
 		insert(s);
 	}

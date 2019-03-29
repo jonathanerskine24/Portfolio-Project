@@ -12,6 +12,8 @@ SDL_Rect InitRect(int w, int h, int x, int y) {
 
 void LoadTiles(Game *game) {
 
+	numTilesRemaining = 100;
+
 	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
 
 	for (int i = 0; i<26; i++) {
@@ -93,22 +95,24 @@ void LoadBoardTiles(Game *game) {
 	return;
 }
 
+
+
 void LoadPlayerTiles(Game *game) {
 
-
 	// random tiles
-	// for (int i = 0; i<7; i++) {
-	// 	game->ui.tilebar.playerTiles[i] = rand() % 26;
-	// }
+	for (int i = 0; i<7; i++) {
+		game->ui.tilebar.playerTiles[i].val = SelectTile();
+		game->ui.tilebar.playerTiles[i].placed = false;
+	}
 
 	// set tiles for testing
-	game->ui.tilebar.playerTiles[0] = 0;
-	game->ui.tilebar.playerTiles[1] = 4;
-	game->ui.tilebar.playerTiles[2] = 3;
-	game->ui.tilebar.playerTiles[3] = 12;
-	game->ui.tilebar.playerTiles[4] = 13;
-	game->ui.tilebar.playerTiles[5] = 8;
-	game->ui.tilebar.playerTiles[6] = 11;
+	// game->ui.tilebar.playerTiles[0].val = 0;
+	// game->ui.tilebar.playerTiles[1].val = 4;
+	// game->ui.tilebar.playerTiles[2].val = 3;
+	// game->ui.tilebar.playerTiles[3].val = 12;
+	// game->ui.tilebar.playerTiles[4].val = 13;
+	// game->ui.tilebar.playerTiles[5].val = 8;
+	// game->ui.tilebar.playerTiles[6].val = 11;
 
 
 	return;
