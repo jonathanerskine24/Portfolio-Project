@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../include/hash.h"
+// #include "../include/hash.h"
 #include "../include/game2.h"
 
 
@@ -12,7 +12,6 @@ int main(int argc, char** argv[]) {
 		printf("Please select an odd number for board size\n");
 		return 1;
 	}
-
 
 	const int FPS = 60;
 	const int frameDelay = 1000/FPS;

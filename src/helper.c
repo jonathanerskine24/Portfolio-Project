@@ -1,6 +1,7 @@
 #include "../include/helper.h"
 #include "../include/types.h"
-#include "../include/hash.h"
+// #include "../include/hash.h"
+#include "../include/trie.h"
 
 int ConvertXYtoIndex(int x, int y) {
 	return ((y * BOARD_SIZE) + (x));
@@ -188,9 +189,6 @@ void CreateTempAdjacency(int s, int e, bool orientation, char *w, Board *board) 
 	return;
 }
 
-// TODO: 
-// FOR VERTICAL WORDS: CHECK TOP AND BOTTOM OF FIRST AND LAST LETTERS FOR LETTERS OR WORDS
-// FOR HORIZONTAL WORDS: CHECK LEFT AND RIGHT OF FIRST AND LAST LETTERS FOR LETERS OR WORDS
 
 /*
 
@@ -478,12 +476,6 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 
 */
 
-// TODO: FINISH THIS FUNCTION
-
-// adding letters vertically and horizontally words seems to work
-// not sure about adding in the middle
-// dont think it works to allow words that are on either end of a letter yet. need to fix.
-// apparently doesnt like placing words vertically now
 
 int CheckConnection(Board *board, int x, int y, bool orientation) {
 	char *word[100];
@@ -534,8 +526,11 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 
 		// if right tile only
 		else if (rightTile) {
+			printf("Line: %d\n", __LINE__);
 			append(word, ALPHABET[board->boardTiles[x][y].stval]);
-			strcpy(word, board->boardTiles[x+1][y].HorizontalAdjacency->word);
+			printf("Word: %s Appending the right tile onto word: %s\n", word, board->boardTiles[x+1][y].HorizontalAdjacency->word);
+			strcat(word, board->boardTiles[x+1][y].HorizontalAdjacency->word);
+			printf("Word after appending: %s\n", word);
 			if (validate(word)) {
 				CreateTempAdjacency(tileLoc, board->boardTiles[x+1][y].HorizontalAdjacency->end, HORIZONTAL, word, board);
 				return CT_VALID;
@@ -572,7 +567,7 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 		if (topTile && bottomTile) {
 			strcpy(word,board->boardTiles[x][y-1].VerticalAdjacency->word);
 			append(word, ALPHABET[board->boardTiles[x][y].stval]);
-			strcpy(word, board->boardTiles[x][y+1].VerticalAdjacency->word);
+			strcat(word, board->boardTiles[x][y+1].VerticalAdjacency->word);
 			if (validate(word)) {
 				CreateTempAdjacency(board->boardTiles[x][y-1].VerticalAdjacency->start, board->boardTiles[x][y+1].VerticalAdjacency->end, VERTICAL, word, board);
 				return CT_VALID;
@@ -596,7 +591,7 @@ int CheckConnection(Board *board, int x, int y, bool orientation) {
 		// check for bottom tile only
 		else if (bottomTile) {
 			append(word, ALPHABET[board->boardTiles[x][y].stval]);
-			strcpy(word, board->boardTiles[x][y+1].VerticalAdjacency->word);
+			strcat(word, board->boardTiles[x][y+1].VerticalAdjacency->word);
 			if (validate(word)) {
 				CreateTempAdjacency(tileLoc, board->boardTiles[x][y+1].VerticalAdjacency->end, VERTICAL, word, board);
 				return CT_VALID;
@@ -744,10 +739,10 @@ void SubmitWord(UserInterface *ui) {
 				beginning = board->boardTiles[location][low-1].VerticalAdjacency->start;
 				oneConnectionMinimum = true;
 			}
-			strcpy(word2, word);
+			strcat(word2, word);
 			if (board->boardTiles[location][high + 1].occupied == true) {
 				end = board->boardTiles[location][high+1].VerticalAdjacency->end;
-				strcpy(word2, board->boardTiles[location][high+1].VerticalAdjacency->word);
+				strcat(word2, board->boardTiles[location][high+1].VerticalAdjacency->word);
 				oneConnectionMinimum = true;
 			}
 			
@@ -766,7 +761,7 @@ void SubmitWord(UserInterface *ui) {
 					}
 					if (board->stagedTiles[0] != NULL) printf("Didn't clear staged tiles\n");
 					printf("Creating adjacency %s between %d and %d", word, low, high);
-					CreateTempAdjacency(beginning, end, VERTICAL, word, board);
+					CreateTempAdjacency(beginning, end, VERTICAL, word2, board);
 					LockAdjacencies(board);
 					printAdjacencyLists(board);
 				}
@@ -779,8 +774,8 @@ void SubmitWord(UserInterface *ui) {
 			// check each tile and react accordingly
 			for (int i = low; i <= high; i++) {
 				printf("LINE: %d ITERATION (x): %d LOCATION (y): %d\n", __LINE__, i, location);
-				if (board->boardTiles[location][i].occupied == true) {
-					append(word, board->boardTiles[location][i].tile->letter);
+				if (board->boardTiles[i][location].occupied == true) {
+					append(word, board->boardTiles[i][location].tile->letter);
 					oneConnectionMinimum = true;
 				} else {
 					int r = CheckConnection(board, i, location, HORIZONTAL);
@@ -799,36 +794,43 @@ void SubmitWord(UserInterface *ui) {
 				}
 			}
 
+
+			// mark beginning and end of word
+			int beginning = ConvertXYtoIndex(low, location);
+			int end = ConvertXYtoIndex(high, location);
+			
+			// append word to front word and then back word to that
+			char *word2[100];
+			word2[0] = '\0';
+			if (board->boardTiles[low - 1][location].occupied == true) {
+				strcpy(word2, board->boardTiles[low-1][location].HorizontalAdjacency->word);
+				beginning = board->boardTiles[low-1][location].HorizontalAdjacency->start;
+				oneConnectionMinimum = true;
+			}
+			strcat(word2, word);
+			if (board->boardTiles[high+1][location].occupied == true) {
+				end = board->boardTiles[high+1][location].HorizontalAdjacency->end;
+				strcat(word2, board->boardTiles[high+1][location].HorizontalAdjacency->word);
+				oneConnectionMinimum = true;
+			}
+			
 			if (oneConnectionMinimum) {
-				printf("ONE CONNECTION MINIMUM!\n");
-				printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
-				printf("%s\n", word);
+				printf("%s\n", word2);
 				fflush(stdout);
-				if (validate(word)) {
+				if (validate(word2)) {
 					printf("VALID WORD!\n");
-					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 					for (int i = 0; i < 7; i ++){
 						if (board->stagedTiles[i] == NULL) break; 
-						printf("FILE: %s, FUNCTION: %s, LINE: %d, ITERATION: %d\n", __FILE__, __func__, __LINE__, i);
 						Lock(board, board->stagedTiles[i], ui->boardTiles);
 						board->stagedTiles[i] = NULL;
 					}
-					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
 					if (board->stagedTiles[0] != NULL) printf("Didn't clear staged tiles\n");
-					printf("FILE: %s, FUNCTION: %s, LINE: %d\n", __FILE__, __func__, __LINE__);
-					// int loc = ConvertXYtoIndex(location, low);
-					// int loc2 = ConvertXYtoIndex(location, high);
-					// printf("loc = %d low = %d high = %d\n", location, low, high);
-					// printf("Creating adjacency %s between %d and %d\n", word, low, high);
-					CreateTempAdjacency(ConvertXYtoIndex(low, location), ConvertXYtoIndex(high, location), HORIZONTAL, word, board);
+					printf("Creating adjacency %s between %d and %d", word, low, high);
+					CreateTempAdjacency(beginning, end, HORIZONTAL, word2, board);
 					LockAdjacencies(board);
 					printAdjacencyLists(board);
-				} else {
-					printf("~~%s is not a valid word\n", word);
 				}
 			}
-
-
 
 
 		}

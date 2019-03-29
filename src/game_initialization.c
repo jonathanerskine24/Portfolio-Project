@@ -52,7 +52,6 @@ void LoadTiles(Game *game) {
 	return;
 }
 
-
 void LoadBoardTiles(Game *game) {
 	Tile *array = (Tile*)malloc(sizeof(Tile) * 26);
 
@@ -94,12 +93,23 @@ void LoadBoardTiles(Game *game) {
 	return;
 }
 
-
 void LoadPlayerTiles(Game *game) {
 
-	for (int i = 0; i<7; i++) {
-		game->ui.tilebar.playerTiles[i] = rand() % 26;
-	}
+
+	// random tiles
+	// for (int i = 0; i<7; i++) {
+	// 	game->ui.tilebar.playerTiles[i] = rand() % 26;
+	// }
+
+	// set tiles for testing
+	game->ui.tilebar.playerTiles[0] = 0;
+	game->ui.tilebar.playerTiles[1] = 4;
+	game->ui.tilebar.playerTiles[2] = 3;
+	game->ui.tilebar.playerTiles[3] = 12;
+	game->ui.tilebar.playerTiles[4] = 13;
+	game->ui.tilebar.playerTiles[5] = 8;
+	game->ui.tilebar.playerTiles[6] = 11;
+
 
 	return;
 }
@@ -168,7 +178,7 @@ void InitializeGame(Game *game) {
 	InitBoardRects(game);
 	printf("Loading dictionary...\n");
 	Render(game);
-	LoadDictionary();
+	LoadDictionaryTrie();
 	printf("Done.\n");
 
 }

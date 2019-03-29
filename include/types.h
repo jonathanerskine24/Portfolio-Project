@@ -3,9 +3,11 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include "graph.h"
+#include "trie.h"
 
 int BOARD_SIZE;
 static char ALPHABET[26] = "abcdefghijklmnopqrstuvwxyz";
+TrieNode *root;
 
 enum direction {
 	VERTICAL = true,
