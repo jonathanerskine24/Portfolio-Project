@@ -4,9 +4,13 @@
 #include <stdbool.h>
 #include "graph.h"
 #include "trie.h"
+#include "heap.h"
 
 // size of the board
 int BOARD_SIZE;
+
+// maximum index along x or y axis
+int MAXIMUM_INDEX;
 
 // alphabet string used for appending letters by index
 static char ALPHABET[26] = "abcdefghijklmnopqrstuvwxyz";
@@ -20,17 +24,36 @@ static int tileBag[26] = {9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1 ,4, 2, 6, 8, 2, 1, 6,
 // num of tiles remaining
 int numTilesRemaining;
 
+
+
+// ENUMERATED TYPES
+
 enum direction {
 	VERTICAL = true,
 	HORIZONTAL = false
 };
 
+enum gametype {
+	NONE = 0,
+	SINGLEPLAYER = 1,
+	MULTIPLAYER = 2
+};
 
 enum connectType {
 	CT_INVALID = 0,
 	CT_VALID = 1,
 	CT_NONE = 2
 };
+
+enum turnType {
+	PLAYER = 1,
+	PLAYER_ONE = 1,
+	PLAYER_TWO = 2,
+	AI = 3
+};
+
+
+// GAME ORGANIZATION STRUCTS
 
 typedef struct GameParameters {
 	int BOARD_WIDTH;
@@ -58,6 +81,7 @@ typedef struct TileSlot {
 	int stval; // staged tile val
 	bool occupied;
 	bool selected;
+	bool valid;
 	Tile *tile;
 	AdjacencyNode *VerticalAdjacency;
 	AdjacencyNode *HorizontalAdjacency;
@@ -65,6 +89,7 @@ typedef struct TileSlot {
 
 typedef struct Board {
 	int numStagedTiles;
+	int numAIstagedTiles;
 	int center;
 	SDL_Texture *boardTileTex;
 	SDL_Texture *centerTileTex;
@@ -74,10 +99,13 @@ typedef struct Board {
 	SDL_Rect boardRects[15][15];
 	TileSlot boardTiles[15][15];
 	AdjacencyNode *tempAdjacencies;
-	StagedTile *stagedTiles[100];
+	AdjacencyNode *adjacencyListHead;
+	StagedTile *stagedTiles[50];
+	StagedTile *AIstagedTiles[50];
 } Board;
 
 typedef struct pTiles {
+	// range 0-25
 	int val;
 	bool placed;
 } pTiles;
@@ -93,9 +121,21 @@ typedef struct TileBar {
 	SDL_Rect tileSlotRects[7];
 } TileBar;
 
+typedef struct Menu {
+	SDL_Texture *menuTex;
+	SDL_Texture *singlelayerButtonTex;
+	SDL_Texture *mutliplayerButtonTex;
+	SDL_Texture *boardSizeButtonTex;
+	SDL_Rect menuRect;
+	SDL_Rect singlePlayerButtonRect;
+	SDL_Rect multiplayerButtonRect;
+	SDL_Rect boardSizeButtonRect;
+} Menu;
 
 typedef struct UserInterface {
+	Menu menu;
 	TileBar tilebar;
+	TileBar player2orAI;
 	Board board;
 	Tile *letters;
 	Tile *boardTiles;
@@ -107,11 +147,13 @@ typedef struct Position {
 } Position;
 
 typedef struct GameInfo {
+	int turn;
 	int board_size;
 	int selectedTile;
 	bool isRunning;
 	bool tileSelected;
-	bool wordDirection; 
+	bool gamemode;
+	bool wordDirection;
 	Position selectedBoardTile;
 	GameParameters params;
 } GameInfo;

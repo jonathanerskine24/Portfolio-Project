@@ -5,6 +5,7 @@
 #include "../include/types.h"
 #include "../include/helper.h"
 #include "../include/tileplacement.h"
+#include "../include/computer.h"
 
 int numcount = 0;
 
@@ -17,6 +18,9 @@ SDL_Texture* LoadTexture(const char* texture, SDL_Renderer* ren) {
 
 
 void Init(Game* game, const char* title, int xpos, int ypos, int width, int height, bool fullScreen) {
+
+	SDL_DestroyRenderer(game->renderer);
+	SDL_DestroyWindow(game->window);
 
 	srand(time(NULL));
 
@@ -49,6 +53,86 @@ void Init(Game* game, const char* title, int xpos, int ypos, int width, int heig
 	}
 }
 
+// finish this
+
+void InitMenuWindow(Game* game, const char* title, int xpos, int ypos, int width, int height, bool fullScreen) {
+
+	srand(time(NULL));
+
+	int flags = 0;
+	const int BOARD_WIDTH = 800;
+	const int BOARD_HEIGHT = 800;
+
+	if (fullScreen) flags = SDL_WINDOW_FULLSCREEN;
+
+	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+
+		printf("Subsystems initialized...\n");
+		game->window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+
+		if (game->window) { // confirm window was created
+			printf("Window created!\n");
+		}
+
+		game->renderer = SDL_CreateRenderer(game->window, -1, 0);
+
+		if (game->renderer) { // confirm renderer was created
+			SDL_SetRenderDrawColor(game->renderer, 27, 27, 27, 255);
+			printf("Renderer created!\n");
+		}
+
+		InitializeMenu(game);
+
+	} else {
+		game->gameinfo.isRunning = false;
+	}
+}
+
+
+void HandleMainMenuEvents(Game *game) {
+
+	SDL_Event event;
+	SDL_PollEvent(&event);
+
+	switch (event.type) {
+		case SDL_QUIT:
+			game->gameinfo.isRunning = false;
+			break;
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym) {
+				case SDLK_RETURN:
+					break;
+			}
+		case SDL_MOUSEBUTTONDOWN:
+
+
+			// left click
+			if (event.button.button == SDL_BUTTON_LEFT) {
+
+				// get mouse position
+				Position mousepos = GetMousePos(event);
+
+				if (CheckClick(mousepos, game->ui.menu.multiplayerButtonRect)) {
+					game->gameinfo.gamemode = MULTIPLAYER;
+				}
+
+				else if (CheckClick(mousepos, game->ui.menu.singlePlayerButtonRect)) {
+					game->gameinfo.gamemode = SINGLEPLAYER;
+				}
+
+			}
+	}
+}
+
+
+void RenderMenu(Game *game) {
+	SDL_RenderClear(game->renderer);
+	SDL_RenderCopy(game->renderer, game->ui.menu.menuTex, NULL, &game->ui.menu.menuRect);
+	SDL_RenderCopy(game->renderer, game->ui.menu.singlelayerButtonTex, NULL, &game->ui.menu.singlePlayerButtonRect);
+	SDL_RenderCopy(game->renderer, game->ui.menu.mutliplayerButtonTex, NULL, &game->ui.menu.multiplayerButtonRect);
+	SDL_RenderCopy(game->renderer, game->ui.menu.boardSizeButtonTex, NULL, &game->ui.menu.boardSizeButtonRect);
+	SDL_RenderPresent(game->renderer);
+}
 
 void HandleEvents(Game* game) {
 
@@ -62,6 +146,8 @@ void HandleEvents(Game* game) {
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
 				case SDLK_RETURN:
+					printf("enter\n");
+					PrintBoard(&game->ui.board);
 					break;
 			}
 		case SDL_MOUSEBUTTONDOWN:
@@ -85,7 +171,10 @@ void HandleEvents(Game* game) {
 
 					}  else if (CheckClick(mousepos, game->ui.tilebar.submitButtonRect)) {
 						printf("Submit\n");
-						SubmitWord(&game->ui);
+						if (SubmitWord(&game->ui)) {
+							game->gameinfo.turn = AI;
+							printf("Turn : %d\n", game->gameinfo.turn);
+						}
 					}
 
 				} else {
@@ -107,7 +196,7 @@ void HandleEvents(Game* game) {
 
 			// right click
 			} else if (event.button.button == SDL_BUTTON_RIGHT) {
-
+				//
 			}
 
 		default:
@@ -115,9 +204,17 @@ void HandleEvents(Game* game) {
 	}
 }
 
-void Update(Game * game) {
-	// numcount++;
-	// game->highlitedTile = game->ui.tilebar.highlightedRectIndex;
+
+
+void Update(Game *game) {
+	// printf("?");
+	// fflush(stdout);
+	if (game->gameinfo.turn == AI) {
+		// printf("~~~~~~");
+		// fflush(stdout);
+		AI_Move(game);
+		game->gameinfo.turn = PLAYER;
+	}
 	return;
 }
 

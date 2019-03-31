@@ -17,3 +17,9 @@ void InitBoardRects(Game *game);
 void InitializeGame(Game *game);
 
 void LoadGameTextures(UserInterface*, SDL_Renderer*);
+
+void LoadMenuTextures(UserInterface *ui, SDL_Renderer *ren);
+
+void LoadGameTextures(UserInterface* ui, SDL_Renderer* ren);
+
+void InitializeMenu(Game *game);

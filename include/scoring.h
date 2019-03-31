@@ -32,3 +32,5 @@ static int scores[26] = {
 
 
 int CalculateScore(char *s);
+
+void CheckScore(Move *move, char *w);

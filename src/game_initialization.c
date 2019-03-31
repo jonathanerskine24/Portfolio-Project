@@ -118,6 +118,15 @@ void LoadPlayerTiles(Game *game) {
 	return;
 }
 
+void LoadPlayer2AITiles(Game * game) {
+	game->ui.board.numAIstagedTiles = 0;
+	for (int i = 0; i<7; i++) {
+		game->ui.player2orAI.playerTiles[i].val = SelectTile();
+		game->ui.player2orAI.playerTiles[i].placed = false;
+	}
+	return;
+}
+
 void InitTileBarRects(Game *game) {
 	for (int i = 0; i < 7; i++) {
 		game->ui.tilebar.tileRects[i].h = 90;
@@ -138,6 +147,8 @@ void InitTileBarRects(Game *game) {
 void InitBoardRects(Game *game) {
 	for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 15; j++) {
+			game->ui.board.boardTiles[i][j].stval = -1;
+			// game->ui.board.boardTiles[i][i].tile->value = -1;
 			game->ui.board.boardRects[i][j].w = 54;
 			game->ui.board.boardRects[i][j].h = 54;
 			game->ui.board.boardRects[i][j].x = i*54;
@@ -153,6 +164,23 @@ void InitBoard(Game *game) {
 
 	game->ui.board.numStagedTiles = 0;
 	game->ui.board.tempAdjacencies = malloc(sizeof(AdjacencyNode));
+	game->ui.board.adjacencyListHead = malloc(sizeof(AdjacencyNode));
+	return;
+}
+
+void LoadMenuRects(UserInterface *ui) {
+	ui->menu.menuRect = InitRect(800, 800, 0, 0);
+	ui->menu.boardSizeButtonRect = InitRect(128, 64, 336, 550);
+	ui->menu.multiplayerButtonRect = InitRect(128, 64, 536, 450);
+	ui->menu.singlePlayerButtonRect = InitRect(128, 64, 126, 450);
+	return;
+}
+
+void LoadMenuTextures(UserInterface *ui, SDL_Renderer *ren) {
+	ui->menu.menuTex = LoadTexture("resources/Background.png", ren);
+	ui->menu.boardSizeButtonTex = LoadTexture("resources/BoardSizeButton.png", ren);
+	ui->menu.mutliplayerButtonTex = LoadTexture("resources/MultiplayerButton.png", ren);
+	ui->menu.singlelayerButtonTex = LoadTexture("reources/SinglePlayerButton.png", ren);
 	return;
 }
 
@@ -162,6 +190,13 @@ void LoadGameTextures(UserInterface* ui, SDL_Renderer* ren) {
 	ui->board.centerTileTex = LoadTexture("resources/centerTile.jpg", ren);
 	ui->tilebar.submitButtonTex = LoadTexture("resources/submitButton.jpg", ren);
 	return;	
+}
+
+void InitializeMenu(Game *game) {
+	game->gameinfo.isRunning = true;
+	LoadMenuTextures(&game->ui, game->renderer);
+	LoadMenuRects(&game->ui);
+	return;
 }
 
 void InitializeGame(Game *game) {
@@ -177,12 +212,20 @@ void InitializeGame(Game *game) {
 	LoadTiles(game);
 	LoadBoardTiles(game);
 	LoadPlayerTiles(game);
+	LoadPlayer2AITiles(game);
 	printf("Initializing board...\n");
 	InitTileBarRects(game);
 	InitBoardRects(game);
 	printf("Loading dictionary...\n");
 	Render(game);
 	LoadDictionaryTrie();
+
+	printf("AI tiles: ");
+	for (int i = 0; i < 7; i++) {
+		printf("%c", ALPHABET[game->ui.player2orAI.playerTiles[i].val]);
+	}
+	printf("\n");
+
 	printf("Done.\n");
 
 }

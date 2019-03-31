@@ -7,6 +7,25 @@ int ConvertXYtoIndex(int x, int y) {
 	return ((y * BOARD_SIZE) + (x));
 }
 
+int ConvertIndextoX(int index) {
+	return index % BOARD_SIZE;
+}
+
+int ConvertIndextoY(int index) {
+	return index / BOARD_SIZE;
+}
+
+void PrintBoard(Board *b) {
+	for (int i = 0; i < BOARD_SIZE; i ++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (b->boardTiles[j][i].occupied == true)
+			printf("|(%02d, %02d) %c| ", j, i, ALPHABET[b->boardTiles[j][i].stval]);
+			else printf("|(%02d, %02d)  | ", j, i);
+		}
+		printf("\n");
+	}
+}
+
 void append(char *s, char c) {
     int len = strlen(s);
     s[len] = c;
@@ -65,6 +84,7 @@ int findHigh(StagedTile *st[], bool direction) {
 	return high;
 }
 
+// returns value 0-25 to indicate a tile value
 int SelectTile() {
 	int randomWeight = rand() % numTilesRemaining;
 	int selectedLetter;

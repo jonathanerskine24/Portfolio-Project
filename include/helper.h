@@ -11,3 +11,9 @@ bool CheckClick(Position pos, SDL_Rect r);
 int findLow(StagedTile *st[], bool direction);
 
 int findHigh(StagedTile* st[], bool direction);
+
+int ConvertIndextoX(int index);
+
+int ConvertIndextoY(int index);
+
+void PrintBoard(Board *b);

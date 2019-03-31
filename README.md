@@ -4,17 +4,15 @@
 TODO:
 
     Major:
-    - scoring system
-    - finish RejectMove() to remove all the staged tiles from the board back into the players inventory
-    - fix code so that placing a tile removes it from players hand
-    - fix code so that new tiles are drawn when placed
-    - fix code so that there is a predetermined amount of each tile, and remove tiles from this selection when drawn
-    - finish word verification, still some cases not covered I believe
+    - create cumulative scoring system
+    - AI seems to have some bugs still
+        - infinite loop sometimes, not sure why, seems to be caused by submitting an incorrect word and trying again...
+        - sometimes segfaults
+    - very rarely get a wraparound, length check must not work
     - make two players
         - two tile sets, flip between between turns
 
 
     Minor:
     - replace strcpy with strncpy
-    - 
 

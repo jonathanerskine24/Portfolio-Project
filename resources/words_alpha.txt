@@ -32918,9 +32918,6 @@ mowing
 mown
 mows
 mozart
-mr
-mrs
-ms
 mu
 much
 muchness
@@ -58012,7 +58009,6 @@ youthfulness
 youths
 yowl
 yoyo
-yrs
 yttrium
 yuck
 yukon
