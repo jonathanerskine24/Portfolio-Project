@@ -14,6 +14,9 @@ and after around 101 it becomes pretty hard to read.
 Launch the game with "./scrabble" followed by a single character to choose gamemode
 Enter s for singleplayer, or m for multiplayer
 
+Video of me playing the game: https://drive.google.com/open?id=1JH8i3sopb6_DxpGV6v6LJd-k5frIbfXq
+
+
 The datafile is called "words_alpha.txt" and is located inside resources. I did not upload it, but you can download it here: https://github.com/jonathanerskine24/words_alpha.txt
 
 Code Citing:
