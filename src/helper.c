@@ -15,11 +15,18 @@ int ConvertIndextoY(int index) {
 	return index / BOARD_SIZE;
 }
 
+void PrintScore(Game *game) {
+	printf("---SCORE---\n");
+	printf("Player 1: %d\nPlayer 2: %d\n", game->gameinfo.player1score, game->gameinfo.player2score);
+	printf("Tiles remaining: %d\n", numTilesRemaining);
+	return;
+}
+
 void PrintBoard(Board *b) {
 	for (int i = 0; i < BOARD_SIZE; i ++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (b->boardTiles[j][i].occupied == true)
-			printf("|(%02d, %02d) %c| ", j, i, ALPHABET[b->boardTiles[j][i].stval]);
+			printf("|(%02d, %02d) %c| ", j, i, ALPHABET[b->boardTiles[j][i].tile->value]);
 			else printf("|(%02d, %02d)  | ", j, i);
 		}
 		printf("\n");

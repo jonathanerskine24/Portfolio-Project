@@ -15,6 +15,6 @@ void TryAllPermutations(struct heap *h, char *s, char *root, int room, int locat
 
 StackNode* FindAllValidTiles(Board *b);
 
-void PlaceWord(UserInterface *ui);
+void PlaceWord(UserInterface *ui, int*, int*);
 
 void AI_Move(Game *game);

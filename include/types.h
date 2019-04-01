@@ -2,10 +2,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "boardSize.h"
 #include "graph.h"
 #include "trie.h"
 #include "heap.h"
 
+
+ 
 // size of the board
 int BOARD_SIZE;
 
@@ -34,9 +37,8 @@ enum direction {
 };
 
 enum gametype {
-	NONE = 0,
-	SINGLEPLAYER = 1,
-	MULTIPLAYER = 2
+	SINGLEPLAYER = false,
+	MULTIPLAYER = true
 };
 
 enum connectType {
@@ -55,11 +57,17 @@ enum turnType {
 
 // GAME ORGANIZATION STRUCTS
 
+
+
 typedef struct GameParameters {
 	int BOARD_WIDTH;
 	int BOARD_HEIGHT;
 	int WINDOW_WIDTH;
 	int WINDOW_HEIGHT;
+	int HORIZONTAL_DIVIDER;
+	int TILEBAR_X_HEIGHT;
+	int TILEBAR_Y_VAL;
+	int TILE_SIZE;
 } GameParameters;
 
 typedef struct Tile {
@@ -87,6 +95,11 @@ typedef struct TileSlot {
 	AdjacencyNode *HorizontalAdjacency;
 } TileSlot;
 
+typedef struct RectAndSlot {
+	SDL_Rect rect;
+	TileSlot slot;
+} RectAndSlot;
+
 typedef struct Board {
 	int numStagedTiles;
 	int numAIstagedTiles;
@@ -94,14 +107,13 @@ typedef struct Board {
 	SDL_Texture *boardTileTex;
 	SDL_Texture *centerTileTex;
 	SDL_Rect boardRect;
-	// SDL_Rect *boardRects[][]; // need to make board variable size
-	// TileSlot *boardTiles[][];
-	SDL_Rect boardRects[15][15];
-	TileSlot boardTiles[15][15];
+	SDL_Rect boardRects[_BOARD_SIZE_][_BOARD_SIZE_];
+	TileSlot boardTiles[_BOARD_SIZE_][_BOARD_SIZE_];
 	AdjacencyNode *tempAdjacencies;
 	AdjacencyNode *adjacencyListHead;
 	StagedTile *stagedTiles[50];
 	StagedTile *AIstagedTiles[50];
+	// RectAndSlot *boardRectsandSlots[][];
 } Board;
 
 typedef struct pTiles {
@@ -116,7 +128,9 @@ typedef struct TileBar {
 	SDL_Texture *tileBarTex;
 	SDL_Texture *highlightTex;
 	SDL_Texture *submitButtonTex;
+	SDL_Texture *swapButtonTex;
 	SDL_Rect submitButtonRect;
+	SDL_Rect swapButtonRect;
 	SDL_Rect tileRects[7];
 	SDL_Rect tileSlotRects[7];
 } TileBar;
@@ -150,6 +164,10 @@ typedef struct GameInfo {
 	int turn;
 	int board_size;
 	int selectedTile;
+	int player1score;
+	int player2score;
+	int player1consecutivePasses;
+	int player2consecutivePasses;
 	bool isRunning;
 	bool tileSelected;
 	bool gamemode;

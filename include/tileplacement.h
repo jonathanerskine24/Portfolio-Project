@@ -19,10 +19,12 @@ void printAdjacencyLists(Board*);
 
 void LockAdjacencies(Board*);
 
-bool SubmitWord(UserInterface *ui);
+bool SubmitWord(UserInterface *ui, int *playerScore);
 
 void RefillTiles(TileBar *tb);
 
 void RejectMove();
 
 void printTempAdjList(Board *board);
+
+void SwapTiles(TileBar *tb);

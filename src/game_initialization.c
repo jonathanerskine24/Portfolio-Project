@@ -61,6 +61,7 @@ void LoadBoardTiles(Game *game) {
 		array[i].letter = 97 + i;
 		array[i].tileRect.w = 100;
 		array[i].tileRect.h = 100;
+		array[i].value = i;
 	}
 
 	array[0].tileTex = LoadTexture("resources/tiles/A_board.png", game->renderer);
@@ -139,20 +140,41 @@ void InitTileBarRects(Game *game) {
 		game->ui.tilebar.tileSlotRects[i].y = game->gameinfo.params.BOARD_HEIGHT;
 	}
 
-	game->ui.tilebar.submitButtonRect = InitRect(85, 45, 700 + 10, game->gameinfo.params.BOARD_HEIGHT + 10);
+	game->ui.tilebar.submitButtonRect = InitRect(85, 40, 700 + 10, game->gameinfo.params.BOARD_HEIGHT + 10);
+	game->ui.tilebar.swapButtonRect = InitRect(85, 40, 700 + 10, game->gameinfo.params.BOARD_HEIGHT + 10 + 45);
+
 	return;
 
 }
 
+
+void InitPlayer2TileBarRects(Game *game) {
+	for (int i = 0; i < 7; i ++) {
+		game->ui.player2orAI.tileRects[i].h = 90;
+		game->ui.player2orAI.tileRects[i].w = 90;
+		game->ui.player2orAI.tileRects[i].x = 5 + (i * 100);
+		game->ui.player2orAI.tileRects[i].y = game->gameinfo.params.BOARD_HEIGHT + 5;
+		game->ui.player2orAI.tileSlotRects[i].h = 100;
+		game->ui.player2orAI.tileSlotRects[i].w = 100;
+		game->ui.player2orAI.tileSlotRects[i].x = (i*100);
+		game->ui.player2orAI.tileSlotRects[i].y = game->gameinfo.params.BOARD_HEIGHT;
+	}
+
+	game->ui.player2orAI.submitButtonRect = InitRect(85, 45, 700 + 10, game->gameinfo.params.BOARD_HEIGHT + 10);
+	game->ui.player2orAI.swapButtonRect = InitRect(85, 45, 700 + 10, game->gameinfo.params.BOARD_HEIGHT + 10 + 90);
+	game->ui.player2orAI.highlightTex = LoadTexture("resouces/highlight.jpg", game->renderer);
+
+}
+
 void InitBoardRects(Game *game) {
-	for (int i = 0; i < 15; i++) {
-		for (int j = 0; j < 15; j++) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
 			game->ui.board.boardTiles[i][j].stval = -1;
 			// game->ui.board.boardTiles[i][i].tile->value = -1;
-			game->ui.board.boardRects[i][j].w = 54;
-			game->ui.board.boardRects[i][j].h = 54;
-			game->ui.board.boardRects[i][j].x = i*54;
-			game->ui.board.boardRects[i][j].y = j*54;
+			game->ui.board.boardRects[i][j].w = game->gameinfo.params.TILE_SIZE;
+			game->ui.board.boardRects[i][j].h = game->gameinfo.params.TILE_SIZE;
+			game->ui.board.boardRects[i][j].x = i*game->gameinfo.params.TILE_SIZE;
+			game->ui.board.boardRects[i][j].y = j*game->gameinfo.params.TILE_SIZE;
 		}
 	}	
 	return;
@@ -189,7 +211,33 @@ void LoadGameTextures(UserInterface* ui, SDL_Renderer* ren) {
 	ui->tilebar.highlightTex = LoadTexture("resources/highlight.jpg", ren);
 	ui->board.centerTileTex = LoadTexture("resources/centerTile.jpg", ren);
 	ui->tilebar.submitButtonTex = LoadTexture("resources/submitButton.jpg", ren);
+	ui->tilebar.swapButtonTex = LoadTexture  ("resources/swapbutton.png"  , ren);
 	return;	
+}
+
+void CalculateParameters(Game *game) {
+	int BOARD_SIZE = game->gameinfo.board_size;
+
+	//board params
+	game->gameinfo.params.BOARD_WIDTH = game->gameinfo.params.TILE_SIZE * BOARD_SIZE; // game->gameinfo.params.TILE_SIZE pixels * num tiles
+	game->gameinfo.params.BOARD_HEIGHT = game->gameinfo.params.TILE_SIZE * BOARD_SIZE; // game->gameinfo.params.TILE_SIZE pixels * num tiles
+	game->gameinfo.params.HORIZONTAL_DIVIDER = game->gameinfo.params.TILE_SIZE * BOARD_SIZE;
+
+	//tilebar params
+	game->gameinfo.params.TILEBAR_X_HEIGHT = game->gameinfo.params.TILE_SIZE * BOARD_SIZE;
+	game->gameinfo.params.TILEBAR_Y_VAL = 0;
+
+	// window params
+	game->gameinfo.params.WINDOW_WIDTH = game->gameinfo.params.BOARD_WIDTH;
+	game->gameinfo.params.WINDOW_HEIGHT = game->gameinfo.params.BOARD_HEIGHT + 100;
+
+	// for (int i = 0; i < BOARD_SIZE; i ++) {
+	// 	for (int j = 0; j < BOARD_SIZE; j++){
+	// 		game->ui.board.boardRectsandSlots[j][i] = malloc(sizeof(RectAndSlot));
+	// 	}
+	// }
+
+
 }
 
 void InitializeMenu(Game *game) {
@@ -220,11 +268,13 @@ void InitializeGame(Game *game) {
 	Render(game);
 	LoadDictionaryTrie();
 
-	printf("AI tiles: ");
-	for (int i = 0; i < 7; i++) {
-		printf("%c", ALPHABET[game->ui.player2orAI.playerTiles[i].val]);
-	}
-	printf("\n");
+	game->gameinfo.player1score = 0;
+	game->gameinfo.player2score = 0;
+	game->gameinfo.player1consecutivePasses = 0;
+	game->gameinfo.player2consecutivePasses = 0;
+
+	if (game->gameinfo.gamemode == MULTIPLAYER) InitPlayer2TileBarRects(game);
+
 
 	printf("Done.\n");
 

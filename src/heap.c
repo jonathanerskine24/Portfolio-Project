@@ -101,10 +101,10 @@ struct Move heap_delete(struct heap *h) {
 	
 	if ((h->count <= (h->size / 2)) && (h->size > initial_size))
 	{
-		printf("\nCount is now : %d\n", h->count);
-		printf("Resizing heap from %d to ", h->size);
+		// printf("\nCount is now : %d\n", h->count);
+		// printf("Resizing heap from %d to ", h->size);
 		h->size = h->size / 2;
-		printf("%d\n", h->size);
+		// printf("%d\n", h->size);
 		h->heaparr = realloc(h->heaparr, sizeof(struct Move) * h->size);
 		if (!h->heaparr) exit(-1); // Exit if the memory allocation fails
 	}
@@ -115,34 +115,15 @@ struct Move heap_delete(struct heap *h) {
 }
 
 
+
 int emptyPQ(struct heap *pq) {
 	int i;
 	while(pq->count != 0) {
-		printf("<<%d ", heap_delete(pq).moveValue);
+		Move move = heap_delete(pq);
+		// if (move.moveValue > 20) {
+			// printf("\nWord: %s Root: %s Location: %d Value: %d\n", move.word, move.root, move.location, move.moveValue);
+		// }
+		
+		// printf("<<%d ", move.moveValue);
 	}
 }
-
-// int main() {
-// 	struct heap h;
-// 	heap_init(&h);
-
-// 	struct Move someNewMove;
-// 	someNewMove.location = 34;
-// 	someNewMove.moveValue = 10;
-// 	strcpy(someNewMove.word, "monkey");
-// 	strcpy(someNewMove.root, "monk");
-// 	someNewMove.orientation = true;
-
-// 	struct Move someNewMove2 = InitMove(32, 10, "car", "carton", true);
-// 	struct Move someNewMove3 = InitMove(3, 14, "b", "beak", false);
-
-// 	heap_push(&h, someNewMove);
-// 	heap_push(&h, someNewMove2);
-// 	heap_push(&h, someNewMove3);
-
-// 	heap_display(&h);
-// 	heap_display(&h);
-// 	emptyPQ(&h);
-// 	return 0;
-
-// }

@@ -4,13 +4,14 @@
 #include "../include/heap.h"
 #include "../include/tileplacement.h"
 
-void CreateStagedTile (Board *b, int tileLocation, int tile) {
-    printf("Tile Location: %d\n", tileLocation);
-    printf("Tile val: %d\n", tile);
+bool CreateStagedTile (Board *b, int tileLocation, int tile) {
 
 	int x = tileLocation % BOARD_SIZE;
 	int y = tileLocation / BOARD_SIZE;
 
+    if (b->boardTiles[x][y].occupied == true) {
+		return false;
+	} 
 	StagedTile *temp = malloc(sizeof(StagedTile));
 
 	temp->tile  = tile;
@@ -21,14 +22,13 @@ void CreateStagedTile (Board *b, int tileLocation, int tile) {
     b->numAIstagedTiles++;
 	b->boardTiles[x][y].stval = tile;
 
-    printf("Num staged: %d\n", b->numAIstagedTiles);
 
-	return;
+	return true;
 
 }
 
 
-void StageTilesForMove(Move *move, Board *b) {
+bool StageTilesForMove(Move *move, Board *b) {
     char root[100]; char word[100];
     root[0] = '\0'; word[0] = '\0';
 
@@ -44,23 +44,24 @@ void StageTilesForMove(Move *move, Board *b) {
 
     if (move->orientation == VERTICAL) locationModifier = BOARD_SIZE;
 
+    bool flag = true;
+
     for (int i = rootLen; i < wordLen; i ++) {
-        CreateStagedTile(b, (move->location + (n * locationModifier)), word[i] - 97);
+        flag = CreateStagedTile(b, (move->location + (n * locationModifier)), word[i] - 97);
+        if (flag = false) return false;
         n++;
     }
 
-
-    return;
+    return true;
     
 }
 
 
 void AddMoveToHeap(struct heap* theHeap, char *word, char *root, int location, bool orientation) {
-    // printf("Got here\n");
+
     Move newMove = InitMove(CalculateScore(word), location, root, word, orientation);
-    // printf("Test\n");
     heap_push(theHeap, newMove);
-    // printf("Also got here\n");
+
     return;
 }
 
@@ -73,11 +74,6 @@ void TryAllPermutations(struct heap *theHeap, char *s, char *root, int room, int
     char temp[100]; temp[0] = '\0';
     strcpy(temp, root);
 
-
-    // printf("LINE : %d\n", __LINE__);
-
-
-    // printf("LINE : %d\n", __LINE__);
     for (int i = 0; i < 7; i ++) { // adding first letter
         char temp2[100]; strcpy(temp2, temp);
         append(temp, (char)s[i]);
@@ -90,7 +86,7 @@ void TryAllPermutations(struct heap *theHeap, char *s, char *root, int room, int
             if (room == 1) break;
             char copy[100]; strcpy(copy, temp);
 
-            // printf("LINE : %d %s\n", __LINE__, temp);
+
             if (j != i) {
                 // printf("LINE : %d %s\n", __LINE__, temp);
                 append(temp, s[j]);
@@ -167,7 +163,12 @@ void TryAllPermutations(struct heap *theHeap, char *s, char *root, int room, int
 bool TryWord(Board *board, char *word) {
 }
 
-void PlaceWord(UserInterface *ui) {
+bool TileIsOpen(Board *b, int x, int y) {
+    if (b->boardTiles[x][y].occupied == true) return false;
+    else return true;
+}
+
+void PlaceWord(UserInterface *ui, int *totalScore, int *consecutivePasses) {
 
     // initialize heap for storing words
     struct heap movesHeap;
@@ -175,27 +176,23 @@ void PlaceWord(UserInterface *ui) {
 
     Board *b = &ui->board;
 
-    printf("LINE : %d\n", __LINE__);
 
     AdjacencyNode *head = b->adjacencyListHead;
 
     char computerTiles[8];
     computerTiles[0] = '\0';
 
-    printf("LINE : %d\n", __LINE__);
 
     for (int i = 0; i < 7; i ++) {
         append(computerTiles, ALPHABET[ui->player2orAI.playerTiles[i].val]);
     }
 
-    printf("~~~~~%s~~~~~\n", computerTiles);
 
-    printf("LINE : %d\n", __LINE__);
 
-    if (head == NULL) printf("head is null\n");
 
     // check for all possible moves given availible tile locations, length of open slot, and our tiles
     while (head != NULL) {
+
 
         if (head->direction == VERTICAL) {
             int x = head->end % BOARD_SIZE;
@@ -203,9 +200,7 @@ void PlaceWord(UserInterface *ui) {
 
 
 
-            printf("%s -> \n", head->word);
             if (b->boardTiles[x][y+1].occupied == false) {
-                printf("occupied: %d, %s\n" , b->boardTiles[x][y+1].occupied, head->word);
 
                 int length = 0;
 
@@ -214,12 +209,9 @@ void PlaceWord(UserInterface *ui) {
                 }
 
 
-                // printf("LINE : %d\n", __LINE__);
-                // printf("Trying %s, %s, %d\n", computerTiles, head->word, length);
                 if (length != 0) TryAllPermutations(&movesHeap, computerTiles, b->boardTiles[x][y].VerticalAdjacency->word, length, head->end, VERTICAL);
             }
 
-            // printf("We can place %s for %d points\n", move.word, move.val);
 
         } else if (head->direction == HORIZONTAL) {
             int x = head->end % BOARD_SIZE;
@@ -229,7 +221,7 @@ void PlaceWord(UserInterface *ui) {
 
             // printf("%s -> \n", head->word);
             if (b->boardTiles[x+1][y].occupied == false) {
-                printf("occupied: %d, %s\n" , b->boardTiles[x+1][y].occupied, head->word);
+                // printf("occupied: %d, %s\n" , b->boardTiles[x+1][y].occupied, head->word);
 
                 int length = 0;
 
@@ -239,7 +231,7 @@ void PlaceWord(UserInterface *ui) {
 
 
                 // printf("LINE : %d\n", __LINE__);
-                printf("Trying %s, %s, %d\n", computerTiles, head->word, length);
+                // printf("Trying %s, %s, %d\n", computerTiles, head->word, length);
                 TryAllPermutations(&movesHeap, computerTiles, b->boardTiles[x][y].HorizontalAdjacency->word, length, head->end, HORIZONTAL);
             }
 
@@ -250,178 +242,126 @@ void PlaceWord(UserInterface *ui) {
         head = head->next;
     }
 
-
-
-    printf("Done with adjacency list!\n");
-    printf("Num words added: %d\n", movesHeap.count);
     int initCount = movesHeap.count;
-    // Move temp = heap_delete(&movesHeap);
-    // printf("Highest scoring word is %s, scoring %d\n", temp.word, temp.moveValue);
-    // after we have created a max heap of moves, iterate through the heap top down to find a move that works
     int n = 0;
 
     if (movesHeap.count == 0) {
-        "\n\n\nNo moves were found.\n\n\n";
+        RefillTiles(&ui->player2orAI);
         return;
     }
 
     while (movesHeap.count > 0) {
-        printf("Line: %d\n", __LINE__);
-        if (n == initCount) printf("\n\n\n\n\n\n\n\nHOLY FUCK MAN YOU WENT THROUGH ALL THE MOVES\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        if (n == initCount) {
+            SwapTiles(&ui->player2orAI);
+            *consecutivePasses = *consecutivePasses + 1;
+        }
+
+        if (consecutivePasses == 3) {
+            return;
+        }
+
 
         int connectionType = CT_NONE;
-
 
         // remove the current highest theoretical move
         Move current = heap_delete(&movesHeap);
         n++;
         int moveScore = current.moveValue;
 
-        printf("Starting to evaluate word number %d: %s -- LINE: %d\n", n, current.word, __LINE__);
+        if (moveScore > 100) break;
 
 
-        printf("LINE: %d\n", __LINE__);
         // place the move on the board
         // these tiles are "placed" but not rendered
-        StageTilesForMove(&current, b);
-        printf("LINE: %d\n", __LINE__);
+        bool successfulStage = StageTilesForMove(&current, b);
+
+        if (!successfulStage) {
+            RejectAIMove(ui);
+            break;
+        }
 
         int x = current.location % BOARD_SIZE;
         int y = current.location / BOARD_SIZE;
 
         int modifier = 1;
 
-        printf("Our current root word ends on tile %d, aka (%d,%d)\n", current.location, x, y);
 
 
         // printf("LINE: %d\n", __LINE__);
 
-        printTempAdjList(b);
+        // printTempAdjList(b);
 
         if (current.orientation == VERTICAL) {
-            printf("LINE: %d\n", __LINE__);
             modifier = BOARD_SIZE;
-            printf("Trying : %s with a value of %d\n", current.word, current.moveValue);
-            printf("Have %d staged tiles.\n", b->numAIstagedTiles);
             for (int i = 1; i <= b->numAIstagedTiles; i++) {
-                printf("\nAI Vertical Test %d / %d Starting\n", i, b->numAIstagedTiles);
-                printf("%s -- We are passing %d, %d, to CheckConnection!\n", current.word, x, y + i);
-                printf("X: %d Y: %d  Y + i: %d\n", x, y, y + i);
                 int result = CheckConnection(b, x, y + i, VERTICAL, &moveScore);
                 if (result == CT_INVALID) {
-                    printf("Cannot place %s, moving on!\n", current.word);
                     connectionType = CT_INVALID;
                     break;
                 }
-                printf("\nAI Vertical Test %d / %d Complete\n", i, b->numAIstagedTiles);
             }
-            printf("Got here 1\n");
         } else {
-             printf("LINE: %d\n", __LINE__);
             for (int i = 1; i <= b->numAIstagedTiles; i++) {
-                printf("\nAI Horizontal Test %d / %d Starting\n", i, b->numAIstagedTiles);
-                printf("%s -- We are passing %d, %d, to CheckConnection!\n", current.word, x + i,y);
                 int result = CheckConnection(b, x + i, y, HORIZONTAL, &moveScore);
-                printf("X: %d, X+i: %d, Y: %d \n", x, x + i, y );
-                if (result == CT_INVALID) {
-                    printf("\n\nCannot place %s, moving on!\n\n", current.word);
+                if (result == CT_INVALID || !TileIsOpen(b, x + i, y)) {
                     connectionType = CT_INVALID;
                     break;   
                 }
-                printf("\nAI Horizontal Test %d / %d complete\n", i, b->numAIstagedTiles);
             }
-            printf("Got here 2\n");
         }
 
-        printf("Line: %d\n", __LINE__);
-        printf("Got here 3: ConnectType = %d\n", connectionType);
-        fflush(stdout);
 
         if (connectionType != CT_INVALID) {
-            printf("We can place %s at location %d\n", current.word, current.location);
-            printf("~~~~~~VALID WORD!\n");
 
-            printf("Checking important values:\n");
-            printf("Number of AI staged tiles: %d\n", ui->board.numAIstagedTiles);
-            printf("Number of AI staged tiles pt 2: %d\n", b->numAIstagedTiles);
-            printf("AI tiles: %s\n", computerTiles);
 
             int s = current.location - (strlen(current.root) * modifier) + modifier;
             int e = s + (strlen(current.word) * modifier) - modifier;
 
-            if (b->numAIstagedTiles == 0)  printf("no staged tiles..\n");
-            else printf("Num staged tiles : %d\n", b->numAIstagedTiles);
-
-            // bool occupiedFlag = false;
-
-            // for (int i = 0; i < 7; i++) {
-            //     if (b->boardTiles[b->AIstagedTiles[i]->x_pos][b->AIstagedTiles[i]->y_pos].occupied == true) {
-            //         occupiedFlag=true;
-            //     }
-            // }
-
-            // if (occupiedFlag == true) break;
 
             for (int i = 0; i < 7; i ++){
-                printf("LINE: %d, %d\n", __LINE__, i);
                 if (b->AIstagedTiles[i] == NULL) {
-                    if (i == 0) printf("Somethin fucked up.... line : %d\n", __LINE__);
                     break;
-                } 
+                }
+
+                for (int j = 0; j < 7; j++) {
+                    if (b->AIstagedTiles[i]->tile == ui->player2orAI.playerTiles[j].val && ui->player2orAI.playerTiles[j].placed == false) {
+                        ui->player2orAI.playerTiles[j].placed = true;
+                        break;
+                    }
+                }
+
                 if (b->AIstagedTiles[i]->tile == ui->player2orAI.playerTiles[i].val) {
                     ui->player2orAI.playerTiles[i].placed = true;
                 }
-                printf("LINE: %d\n", __LINE__);         
+
                 LockAI(b, b->AIstagedTiles[i], ui->boardTiles);
-                printf("\nIs this occupied? %d\n", b->boardTiles[b->AIstagedTiles[i]->x_pos][b->AIstagedTiles[i]->y_pos].occupied);
-                printf("Is THIS occupied? %d\n", ui->board.boardTiles[b->AIstagedTiles[i]->x_pos][b->AIstagedTiles[i]->y_pos].occupied);
-                printf("LINE: %d\n", __LINE__);
                 b->AIstagedTiles[i] = NULL;
             }
 
-            printf("LINE: %d\n", __LINE__);
-            if (b->AIstagedTiles[0] != NULL) printf("Didn't clear staged tiles\n");
-            // printf("Creating adjacency %s between %d and %d", word, low, high);
-
-            // int s = current.location - (strlen(current.root) * modifier) + modifier;
-            // int e = s + (strlen(current.word) * modifier) - modifier;
 
             CreateTempAdjacency(s, e, current.orientation, current.word, b);
 
-            printf("LINE: %d\n", __LINE__);
             LockAdjacencies(b);
-            printf("LINE: %d\n", __LINE__);
+            // printAdjacencyLists(b);
+            *totalScore = *totalScore + moveScore;
 
-            printf("\n\n\n::::CURRENT ADJACENCIES::::\n");
-            printAdjacencyLists(b);
-            printf("END CURRENT ADJACENCIES:::\n\n\n");
-
-
-            printf("LINE: %d\n", __LINE__);
             printf("Your move scored %d points!\n", moveScore);
-            printf("LINE: %d\n", __LINE__);
             RefillTiles(&ui->player2orAI);
-            printf("LINE: %d\n", __LINE__);
+            *consecutivePasses = 0;
             emptyPQ(&movesHeap);
-            printf("LINE: %d\n", __LINE__);
+
 
             break;
         }
 
-        printf("LINE: %d\n", __LINE__);
-        fflush(stdout);
 
         RejectAIMove(ui);
 
 
     }    
 
-
-
-    printf("LINE : %d\n", __LINE__);
-
 }
 
 void AI_Move(Game *game) {
-    PlaceWord(&game->ui);
+    PlaceWord(&game->ui, &game->gameinfo.player2score, &game->gameinfo.player2consecutivePasses);
 }
