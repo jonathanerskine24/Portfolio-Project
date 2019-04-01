@@ -1,2 +1,2 @@
 // BOARD SIZE
-#define _BOARD_SIZE_ 15
+#define _BOARD_SIZE_ 39

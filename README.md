@@ -2,6 +2,11 @@
 
 To compile the game, cd into the Portfolio-Project directory and run "make"
 
+First you must install the SDL libraries, on ubuntu do so by following this guide as I have it set to standard installs
+Only SDL2 and SDL2-image are required
+
+Installation Guide: https://wiki.libsdl.org/Installation
+
 Edit the defined parameter inside of boardSize.h to change the board size.
 Board sizes above around 51 will have your tile selection be almost completely off the screen
 and after around 101 it becomes pretty hard to read.
